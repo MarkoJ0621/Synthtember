@@ -19,11 +19,15 @@ nchnls = 1
 ;3) full delay added
 ;4) bass trigger added
 ;5) Other pad added 
-;6)
+;6) Sparkle on main pad start
+;7) Other lead introduced
+;8) Introduce odds of other pad variance
 seed 0
 gkNotes[] fillarray 0, 7, -7, 4, -5, 5, 12, 19
 gkHands[] init 30
 instr triggers
+	kThreshold init 10
+	kThreshold2 init 10
 	kBassFlag init 0
 	kBassOdds init 9
     kCounter init 1
@@ -67,15 +71,24 @@ instr triggers
 		if gkmetro3 == 1 then
 			kNotePad random 0,6
 			kHarmonyTest random 0, 10
-			printk2 kHarmonyTest
 			event"i", "otherPad", 0, 6, gkFreq + gkNotes[floor(kNotePad)]
 			event"i", "otherLead", 2, 4, gkFreq + gkNotes[floor(kNotePad)]
-			; if gkHands[8] == 1 then
-			; event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7
-			; endif
-			; if gkHands[7] == 1 then
-			; 	event "i", "pad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7,1
-			; endif
+			if gkHands[7] == 1 then
+				kThreshold = 6
+			else 
+				kThreshold = 10
+			endif
+			if kThreshold < kHarmonyTest then
+			 event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7
+			endif
+			if gkHands[8] == 1 then
+				kThreshold2 = 8
+			else 
+				kThreshold2 = 10
+			endif
+			if kThreshold2 < kHarmonyTest then
+				event "i", "pad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7,1
+			endif
 		endif
 		if gkmetro4 == 1 && kBassFlag == 1 then
 			kMetro4Counter += 1
@@ -127,7 +140,7 @@ instr pad
 	aSig6 oscil 0.2, cpsmidinn(gkFreq + 19) + (kLFO * 0.5)
 	aSum = ((aSig1 + aSig2 + aSig3) * kEnv1 ) + ((aSig4 + aSig5 + aSig6) * kEnv2)
 	aFilt butterlp aSum, 800 + ((1000 * kLFO) + 400)
-	out aFilt
+	out aFilt * 0
 	gaRSend = aFilt * 0.1
 endin
 
@@ -187,7 +200,7 @@ instr otherLead
 	aEnv      adsr 2,1,.7,3
 	aSum = aSig1 + aSig2
 	aOut, aDummy reverbsc aSum, aSum, 0.95, 20000,sr, 0
-	outs aOut * 0.2 * aEnv + gkHands[6]
+	 outs aOut * 0.2 * aEnv * gkHands[6]
 endin
 
 
@@ -198,7 +211,7 @@ instr sparkle
 	aSig vco2 0.2, kFreq * 3, 12
 	aSig2 vco2 0.1, kFreq * 1.5, 12
 	aSum butterlp aSig + aSig2, kFreq*2
-	out 0.7 * aSum *kEnv
+	out 0.7 * aSum *kEnv * gkHands[5]
 	gaRSend  += aSum * 1 * kEnv
 	gaDSig   += aSum * 0.2 * kEnv
 endin
@@ -219,7 +232,7 @@ aEnv      adsr 2,1,.7,3
 aFiltenv adsr 2,1,1,3
 asum = aSig1 + aSig2 + aSig3 + aSig4
 aSig moogladder asum,500*aFiltenv,0.3
-          out  0.7 *   aSig*aEnv, aSig*aEnv * gkHands[4]
+          out  0.7 *   aSig*aEnv * gkHands[4]
   endin
   
   
