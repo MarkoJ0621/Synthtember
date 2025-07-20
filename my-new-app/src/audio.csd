@@ -140,8 +140,8 @@ instr pad
 	aSig6 oscil 0.2, cpsmidinn(gkFreq + 19) + (kLFO * 0.5)
 	aSum = ((aSig1 + aSig2 + aSig3) * kEnv1 ) + ((aSig4 + aSig5 + aSig6) * kEnv2)
 	aFilt butterlp aSum, 800 + ((1000 * kLFO) + 400)
-	out aFilt * 0
-	gaRSend = aFilt * 0.1
+	out aFilt
+	gaRSend = aFilt * 0.1 * gkHands[1]
 endin
 
 
@@ -185,7 +185,6 @@ instr melody
 	kmul line 0, p3, 1
 	aSig gbuzz 0.3, kfreq, 4, 6, kmul, 1
 	out  0.7  *     (aSig/2) * kEnv * p5
-	gasendR += gaRSend
 	if kDelayFlag == 1 then
        	gaDSig += (kEnv * aSig * 0.15)
 	endif
@@ -212,8 +211,8 @@ instr sparkle
 	aSig2 vco2 0.1, kFreq * 1.5, 12
 	aSum butterlp aSig + aSig2, kFreq*2
 	out 0.7 * aSum *kEnv * gkHands[5]
-	gaRSend  += aSum * 1 * kEnv
-	gaDSig   += aSum * 0.2 * kEnv
+	gaRSend  += aSum * 1 * kEnv * gkHands[5]
+	gaDSig   += aSum * 0.2 * kEnv * gkHands[5]
 endin
 
 
