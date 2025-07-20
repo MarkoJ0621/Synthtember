@@ -11,6 +11,8 @@ let posRefresh = 40;
 let skew = 0;
 let prevCount = 0;
 let testCount = 0;
+
+//used for audio reactive visuals, not being used atm
 // async function startAudioMonitor() {
 //     // Step 1: List audio input devices
 //     const devices = await navigator.mediaDevices.enumerateDevices();
@@ -58,7 +60,7 @@ let testCount = 0;
 // startAudioMonitor().catch(err => console.error("Error initializing input:", err));
 
 
-// 🎯 Send Csound message through IPC
+//  Send Csound message through IPC
 function sendToCsound(message) {
     if (window.csoundBridge) {
         // console.log("message sent");
@@ -68,7 +70,7 @@ function sendToCsound(message) {
     }
 }
 
-// 🖐️ Hand tracking logic
+//  Hand tracking logic
 const stopTracking = await trackHands(({ handCount, hands }) => {
     counter += 1;
     //calculating skew of hands in the room

@@ -1,3 +1,5 @@
+//hand tracking logic
+
 import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
 
 let handLandmarker = null;

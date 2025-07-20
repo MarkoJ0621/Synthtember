@@ -16,7 +16,7 @@ const createWindow = () => {
     width: 3024,
     height: 1964,
     webPreferences: {
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, // ✅ absolute path
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, //absolute path
       nodeIntegration: false,
       webSecurity: false,
     },

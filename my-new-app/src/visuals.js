@@ -1,3 +1,4 @@
+//visuals rendering
 import Hydra from 'hydra-synth'
 import p5 from 'p5'
 
