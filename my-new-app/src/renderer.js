@@ -92,7 +92,7 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
 
 
     //re-rendering hyda instance
-    run(1, x, y, 1);
+    run(y, handCount);
 });
 
 //checking if handcount has changed and adjusts csound array accordingly
