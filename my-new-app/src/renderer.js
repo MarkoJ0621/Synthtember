@@ -92,7 +92,7 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
 
 
     //re-rendering hyda instance
-    run(y, handCount);
+    run(y, handCount + testCount);
 });
 
 //checking if handcount has changed and adjusts csound array accordingly
@@ -119,6 +119,14 @@ function decreaseHandCount() {
     testCount -= 1;
 
 }
+
+function setTestCount(number) {
+    for (let i = testCount; i <= number; i++) {
+        sendToCsound(`i "setHand" 0 0.01 ${i} ${1}`);
+    }
+    testCount = number;
+}
 //make them visible to electron dev controls
 window.increaseHandCount = increaseHandCount;
 window.decreaseHandCount = decreaseHandCount;
+window.setTestCount = setTestCount;
