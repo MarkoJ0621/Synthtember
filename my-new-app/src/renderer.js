@@ -1,7 +1,7 @@
 import './index.css';
 import { run } from "./visuals.js";
-import { trackHands } from './tracking.js';
-import { p5Instance } from './visuals.js';
+import { trackHands } from './tracking-child.js';
+// import { p5Instance } from './visuals.js';
 let x = 0;
 let y = 0;
 let hand1flag = true;
@@ -90,12 +90,14 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
 
 
 
-    if (length(hands) > 0) {
-        for (let i = 0; i < length(hands); i++) {
-            p5Instance.drawCircleAt(hands[i].x / window.innerWidth, hands[i].y / window.innerHeight);
-        }
-        console.log(hands);
-    }
+    // if (handCount > 0) {
+    //     for (let i = 0; i < handCount; i++) {
+    //         p5Instance.drawCircleAt(
+    //             hands[i].x * window.innerWidth,
+    //             hands[i].y * window.innerHeight
+    //         )
+    //     }
+    // }
 
     //re-rendering hyda instance
     run(y, handCount + testCount);
