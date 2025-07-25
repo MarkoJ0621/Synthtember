@@ -62,26 +62,26 @@ export function run(skew, handCount) {
 }
 
 
-// export const p5Instance = new p5((p) => {
-//     p.setup = () => {
-//         const cnv = p.createCanvas(window.innerWidth, window.innerHeight)
-//         cnv.parent('p5-overlay')
-//         p.clear()
-//         p.noFill()
-//         p.stroke(255)
-//     }
+export const p5Instance = new p5((p) => {
+    p.setup = () => {
+        const cnv = p.createCanvas(window.innerWidth, window.innerHeight)
+        cnv.parent('p5-overlay')
+        p.clear()
+        p.noFill()
+        p.stroke(255)
+    }
 
-//     p.draw = () => {
-//         p.clear()
-//         p.ellipse(p.mouseX, p.mouseY, 100, 100)
-//     }
+    p.draw = () => {
+        p.clear()
+        p.ellipse(p.mouseX, p.mouseY, 100, 100)
+    }
 
-//     p.windowResized = () => {
-//         p.resizeCanvas(window.innerWidth, window.innerHeight)
-//     }
+    p.windowResized = () => {
+        p.resizeCanvas(window.innerWidth, window.innerHeight)
+    }
 
-//     p.drawCircleAt = (x, y, r = 100) => {
-//         p.clear()
-//         p.ellipse(x, y, r, r)
-//     }
-// })
+    p.drawCircleAt = (x, y, r = 100) => {
+        p.clear()
+        p.ellipse(x, y, r, r)
+    }
+})
