@@ -1,2 +1,0 @@
-- pad not working on 0 hands
-- reverb signal of instruments not muted when instrument not active 
