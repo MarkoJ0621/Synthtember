@@ -38,7 +38,7 @@ export function run(skew, handCount) {
             .colorama(skew)
             .modulateRotate(o0, () => Math.sin(time * 0.2) * 3.5)
             .modulatePixelate(noise().pixelate(10), 16, 500)
-            .layer(src(s0).contrast(1.6).luma(0.5, 0.2))
+            .layer(src(s0).contrast(1.6).luma(0.5, 0.2).scale(1, -1, 1, 0, 0))
             .modulateHue(o0, handCount)
             .out()
     } else if (handCount > 4 && handCount <= 7) {
@@ -63,25 +63,46 @@ export function run(skew, handCount) {
 
 
 export const p5Instance = new p5((p) => {
-    p.setup = () => {
-        const cnv = p.createCanvas(window.innerWidth, window.innerHeight)
-        cnv.parent('p5-overlay')
-        p.clear()
-        p.noFill()
-        p.stroke(255)
-    }
+    let positions = [];
 
-    p.draw = () => {
-        p.clear()
-        p.ellipse(p.mouseX, p.mouseY, 100, 100)
-    }
+    p.setup = () => {
+        const cnv = p.createCanvas(window.innerWidth, window.innerHeight);
+        cnv.parent('p5-overlay');
+        p.clear();
+        p.noFill();
+        p.stroke(255);
+    };
 
     p.windowResized = () => {
-        p.resizeCanvas(window.innerWidth, window.innerHeight)
-    }
+        p.resizeCanvas(window.innerWidth, window.innerHeight);
+    };
 
-    p.drawCircleAt = (x, y, r = 100) => {
-        p.clear()
-        p.ellipse(x, y, r, r)
+    // Call this from your tracking callback for each hand's position
+    p.addHandPosition = (x, y) => {
+        positions.push({ x, y });
+        if (positions.length > 50) { // limit trail length
+            positions.shift();
+        }
+    };
+
+    p.draw = () => {
+        p.clear(); // clears transparent background
+
+        // Draw fading circles from oldest to newest
+        positions.forEach((pos, i) => {
+            const alpha = p.map(i, 0, positions.length - 1, 0, 255);
+            const r = 255
+            const g = 255
+            const b = p.map(i, 0, positions.length - 1, 0, 255);
+            p.fill(r, g, b, alpha);
+            p.noStroke();
+            p.ellipse(pos.x, pos.y, 25, 25);
+        });
+    };
+    p.noNewPositions = () => {
+        // Just shift the oldest to fade out existing positions
+        if (positions.length > 0) {
+            positions.shift();
+        }
     }
-})
+});

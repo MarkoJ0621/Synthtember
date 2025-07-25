@@ -84,20 +84,19 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
             y = skew * 0.2;
         } else {
             y = 0;
+
         }
         updateHandCount(handCount);
     }
 
-
-
-    if (handCount > 0) {
-        for (let i = 0; i < length(hands); i++) {
-            p5Instance.drawCircleAt(hands[i].x / window.innerWidth, hands[i].y / window.innerHeight);
-        }
-        console.log(hands);
+    if (handCount == 0) {
+        p5Instance.noNewPositions();
     }
-
-    //re-rendering hyda instance
+    for (let i = 0; i < handCount; i++) {
+        const x = window.innerWidth - hands[i].x * window.innerWidth;
+        const y = hands[i].y * window.innerHeight;
+        p5Instance.addHandPosition(x, y);
+    }    //re-rendering hyda instance
     run(y, handCount + testCount);
 });
 

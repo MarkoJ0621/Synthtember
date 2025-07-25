@@ -1,5 +1,3 @@
-/Users/markojeremic / Desktop / DOCUMENTS / csound / webcsound / my - new- app / src / tracking.js//hand tracking logic
-
 import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
 
 let handLandmarker = null;
@@ -57,7 +55,7 @@ export async function trackHands(callback) {
                     const results = handLandmarker.detectForVideo(video, performance.now());
 
                     const hands = results.landmarks.map((landmarks, index) => {
-                        const wrist = landmarks[0];
+                        const wrist = landmarks[9];
                         const handedness = results.handedness[index]?.[0]?.categoryName || 'Unknown';
 
                         // Initialize smoothing state if first time
