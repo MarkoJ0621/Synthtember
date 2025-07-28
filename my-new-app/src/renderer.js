@@ -7,7 +7,7 @@ let y = 0;
 let hand1flag = true;
 let hand2flag = true;
 let counter = 0;
-let posRefresh = 40;
+let posRefresh = 10;
 let skew = 0;
 let prevCount = 0;
 let testCount = 0;
@@ -79,9 +79,9 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
         if (handCount !== 0) {
             skew = 0;
             for (let i = 0; i < hands.length; i++) {
-                skew += hands[i].x > 0.5 ? 1 : -1;
+                skew += 0.5 - hands[i].x
             }
-            y = skew * 0.2;
+            y = skew;
         } else {
             y = 0;
 

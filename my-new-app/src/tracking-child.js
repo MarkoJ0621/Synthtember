@@ -1,4 +1,3 @@
-/Users/markojeremic / Desktop / DOCUMENTS / csound / webcsound / my - new- app / src / tracking.js//hand tracking logic
 
 import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
 

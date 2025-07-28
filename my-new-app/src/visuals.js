@@ -42,13 +42,31 @@ export function run(skew, handCount) {
             .modulateHue(o0, handCount)
             .out()
     } else if (handCount > 4 && handCount <= 7) {
-        src(s0).thresh(0.4).luma(0.2).brightness(-0.5).out(o1)
 
+        function layerThing() {
+            return noise().modulate(noise()).thresh(0.4).pixelate(400).modulateRotate(noise(), () => 130 + Math.sin(time) * 100)
+        }
+
+
+        function otherWebCam() {
+            return src(s0).scale(1, -1, 1, 0, 0)
+                .luma(0.4, 0).thresh(0.7)
+        }
+
+
+        layerThing().layer(otherWebCam()).out()
+
+    }
+
+
+
+    else if (handCount > 7 && handCount < 11) {
+        src(s0).thresh(0.4).luma(0.2).brightness(-0.5).out(o1)
+        console.log(skew);
         voronoi(10).modulateRepeat(o2, 10, 10, 1, 1)
-            .color(1, 0, 0.2, 1)
+            .color(1, skew, skew * 5, 1)
             .modulate(src(o2).modulatePixelate(noise(10).pixelate(10), 10))
             .brightness(-0.4)
-            .colorama(skew)
             .out(o2)
 
         src(o2).layer(src(o1))
@@ -59,6 +77,8 @@ export function run(skew, handCount) {
             .modulateHue(o2, () => Math.sin(0.4 * time) * 50)
             .out()
     }
+
+
 }
 
 
