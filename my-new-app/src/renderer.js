@@ -131,7 +131,12 @@ function setTestCount(number) {
     }
     testCount = number;
 }
+
+function setSkew(number) {
+    skew = number
+}
 //make them visible to electron dev controls
 window.increaseHandCount = increaseHandCount;
 window.decreaseHandCount = decreaseHandCount;
 window.setHandCount = setTestCount;
+window.setSkew = setSkew;
