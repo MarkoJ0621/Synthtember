@@ -73,8 +73,8 @@ function sendToCsound(message) {
 //  Hand tracking logic
 const stopTracking = await trackHands(({ handCount, hands }) => {
     counter += 1;
-    //calculating skew of hands in the room
-    if (counter === posRefresh) {
+    //calculating skew of hands in the room, decreases refresh rate based on handCount to try not make the program shit itself
+    if (counter === posRefresh + ((handCount / 4) * posRefresh)) {
         counter = 0;
         if (handCount !== 0) {
             skew = 0;
@@ -134,4 +134,4 @@ function setTestCount(number) {
 //make them visible to electron dev controls
 window.increaseHandCount = increaseHandCount;
 window.decreaseHandCount = decreaseHandCount;
-window.setTestCount = setTestCount;
+window.setHandCount = setTestCount;

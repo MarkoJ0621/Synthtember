@@ -22,7 +22,15 @@ nchnls = 1
 ;6) Sparkle on main pad start
 ;7) Other lead introduced
 ;8) Introduce odds of other pad variance
+;9) pad and otherpad role swap!!
+;10) spectral processing on pad added
+;11) extra harmony to da melody bell
+;12) pad variance odds decreased
+;13) same for other pad ^^
+;14) another reverb for depth with all pads and melody
 seed 0
+gaRSend init 0
+gaRSend2 init 0
 gkNotes[] fillarray 0, 7, -7, 4, -5, 5, 12, 19
 gkHands[] init 30
 instr triggers
@@ -30,6 +38,7 @@ instr triggers
 	kThreshold2 init 10
 	kBassFlag init 0
 	kBassOdds init 9
+	kSpectralOdds init 3
     kCounter init 1
 	gkmetro metro 0.1
 	gkmetro4 metro 2
@@ -40,7 +49,16 @@ instr triggers
 		kCounter = 1
 		kLinePlay random 0, 10
 		gkFreq random 55, 65
-		event "i", "pad", 0, 10, gkFreq
+		if gkHands[9] == 1 then 
+			kNotePad random 0,6
+			event "i", "otherPad", 0, 10, gkFreq,1
+			event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7,1
+			if kLinePlay > kSpectralOdds then 
+				event "i", "pad", 0, 10, gkFreq, 0,1
+			endif
+		else
+			event "i", "pad", 0, 10, gkFreq, 0,0
+		endif
 		kSparklePlay random 0,10
 		if kSparklePlay > 0 then
 			event "i", "sparkle", 0, 5, gkFreq
@@ -54,12 +72,12 @@ instr triggers
 				kBassFlag = 1
 				kBassOdds = 5
 			endif
-			endif
+		endif
 	endif
 
 		if gkmetro2 == 1 then
 			kNotePlay random 0, 10
-			event "i", "melody", 0, 10, gkFreq, kCounter,0
+			event "i", "melody", 0, 2, gkFreq, kCounter,0
 			kCounter = kCounter * 2/3
 		endif
 		if gkmetro2 == 1 then
@@ -71,20 +89,35 @@ instr triggers
 		if gkmetro3 == 1 then
 			kNotePad random 0,6
 			kHarmonyTest random 0, 10
-			event"i", "otherPad", 0, 6, gkFreq + gkNotes[floor(kNotePad)]
+			event"i", "otherPad", 0, 6, gkFreq + gkNotes[floor(kNotePad)],0
 			event"i", "otherLead", 2, 4, gkFreq + gkNotes[floor(kNotePad)]
 			if gkHands[7] == 1 then
 				kThreshold = 6
 			else 
 				kThreshold = 10
 			endif
+			if gkHands[12] == 1 then 
+				kThreshold = 2
+			endif
 			if kThreshold < kHarmonyTest then
-			 event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7
+				if gkHands[9] == 1 then 
+					if gkHands[11] == 1 then 
+						event "i", "pad", 0, 10, gkFreq,1,0
+						event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7
+					else 
+						event "i", "pad", 0, 10, gkFreq,1,0
+					endif
+				else
+					event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7
+				endif 
 			endif
 			if gkHands[8] == 1 then
 				kThreshold2 = 8
 			else 
 				kThreshold2 = 10
+			endif
+			if gkHands[12] == 1 then 
+				kThreshold2 = 2
 			endif
 			if kThreshold2 < kHarmonyTest then
 				event "i", "pad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7,1
@@ -110,7 +143,7 @@ instr melodyNotes
 	if kmetro3 == 1 && kCounter != p4 then
 		kNote random 0, 7
 		if gkHands[0] == 1 then
-		event "i", "melody", 0, 4, gkFreq + gkNotes[kNote],0.7,1
+		event "i", "melody", 0, 3, gkFreq + gkNotes[kNote],0.7,1
 		endif
 		if kNote % 2 == 0 then
 			event "i", "sparkle", 0, 4, gkFreq + gkNotes[kNote],0.7
@@ -124,6 +157,7 @@ endin
 instr pad
 	gkFreq = p4
 	kADSRType = p5
+	kSpectralFlag = p6
 	if kADSRType == 1 then
 		kEnv1 adsr 1,2,0.3,3
 		kEnv2 adsr 3,0.1,1,2.9
@@ -132,16 +166,29 @@ instr pad
 		kEnv2 adsr 6,0.1,1,3.9
 	endif
 	kLFO lfo 1, 0.2
+	aSig oscil 0.08, cpsmidinn(gkFreq - 12)
+	aSigB oscil 0.07, cpsmidinn(gkFreq - 17)
 	aSig1 oscil 0.2, cpsmidinn(gkFreq)
 	aSig2 oscil 0.1, cpsmidinn(gkFreq - 7)
 	aSig3 oscil 0.15, cpsmidinn(gkFreq - 5)
-	aSig4 oscil 0.2, cpsmidinn(gkFreq + 7) + (kLFO * 0.5)
-	aSig5 oscil 0.2, cpsmidinn(gkFreq + 12)
-	aSig6 oscil 0.2, cpsmidinn(gkFreq + 19) + (kLFO * 0.5)
-	aSum = ((aSig1 + aSig2 + aSig3) * kEnv1 ) + ((aSig4 + aSig5 + aSig6) * kEnv2)
+	aSig4 oscil 0.1, cpsmidinn(gkFreq + 7) + (kLFO * 0.5)
+	aSig5 oscil 0.1, cpsmidinn(gkFreq + 12)
+	aSig6 oscil 0.1, cpsmidinn(gkFreq + 19) + (kLFO * 0.5)
+	aSum = ((aSig1 + aSig2 + aSig3 + aSig) * kEnv1 ) + ((aSig4 + aSig5 + aSig6 + aSigB) * kEnv2)
 	aFilt butterlp aSum, 800 + ((1000 * kLFO) + 400)
-	out aFilt
-	gaRSend = aFilt * 0.1 * gkHands[1]
+	if kSpectralFlag == 1 then 
+			kbin  oscil 0.1,betarand(4,0,0) - 5, 1
+		fSig pvsanal aFilt, 1024, 256, 2048, 0
+		printk2 gkFreq
+		fThing pvsarp fSig, kbin, 0.5, 5
+		aOut pvsynth fThing
+		out aOut
+		gaRSend = aOut * 0.08
+	else
+		out aFilt
+		gaRSend = aFilt * 0.1 * gkHands[1]
+		gaRSend2 = gaRSend2 +( aFilt * 0.2)
+	endif
 endin
 
 
@@ -179,15 +226,23 @@ endin
 instr melody
 	kFdback =        0.7
 	kDelayFlag = p6
-	kEnv adsr 0.1,1,0,0.1
+	kEnv adsr 0.1,1.3,0,0.1
 	kamp = 0.3
 	kfreq = cpsmidinn(p4)
 	kmul line 0, p3, 1
 	aSig gbuzz 0.3, kfreq, 4, 6, kmul, 1
-	out  0.7  *     (aSig/2) * kEnv * p5
+	aSig2 gbuzz 0.15, kfreq * 1.5, 4 ,6, kmul, 1
+	aSig3 gbuzz 0.2, kfreq / 2, 4 ,6, kmul, 1
+	if gkHands[11] == 1 then 
+		aSum = (aSig + aSig2 + aSig3) * 0.8
+	else
+		aSum = aSig
+	endif
+	out  0.7  *  (aSum/2) * kEnv * p5
 	if kDelayFlag == 1 then
        	gaDSig += (kEnv * aSig * 0.15)
 	endif
+	gaRsend2 = gaRSend2 + (aSum * 0.3)
 endin
 
 
@@ -199,7 +254,7 @@ instr otherLead
 	aEnv      adsr 2,1,.7,3
 	aSum = aSig1 + aSig2
 	aOut, aDummy reverbsc aSum, aSum, 0.95, 20000,sr, 0
-	 outs aOut * 0.2 * aEnv * gkHands[6]
+	outs aOut * 0.2 * aEnv * gkHands[6]
 endin
 
 
@@ -217,22 +272,28 @@ endin
 
 
 
-  instr otherPad
-  kFreq cpsmidinn p4+12
-aSig1       poscil    .2,kFreq ,1
-aSig2      poscil    .2,kFreq*2 ,1
-aSig3 			poscil .2,kFreq/2,1
-kfiltq = 0.8
-kfiltrate = 0.0002
-kvibf  = 5
-kvamp  = .01
-aSig4 moog .15, kFreq, kfiltq, kfiltrate, kvibf, kvamp, 1, 1, 1
-aEnv      adsr 2,1,.7,3
-aFiltenv adsr 2,1,1,3
-asum = aSig1 + aSig2 + aSig3 + aSig4
-aSig moogladder asum,500*aFiltenv,0.3
-          out  0.7 *   aSig*aEnv * gkHands[4]
-  endin
+instr otherPad
+	kFreq cpsmidinn p4+12
+	kADSRFlag = p5
+	if kADSRFlag == 1 then 
+		aEnv adsr 2,5,0.3,8
+	else 
+		aEnv      adsr 2,1,.7,3
+	endif
+	aSig1       poscil    .2,kFreq ,1
+	aSig2      poscil    .2,kFreq*2 ,1
+	aSig3 			poscil .2,kFreq/2,1
+	kfiltq = 0.8
+	kfiltrate = 0.0002
+	kvibf  = 5
+	kvamp  = .01
+	aSig4 moog .15, kFreq, kfiltq, kfiltrate, kvibf, kvamp, 1, 1, 1
+	aFiltenv adsr 2,1,1,3
+	asum = aSig1 + aSig2 + aSig3 + aSig4
+	aSig moogladder asum,500*aFiltenv,0.3
+	out  0.7 *   aSig*aEnv * gkHands[4]
+	gaRSend2 = gaRSend2 + (aSig * 02)
+endin
   
   
   
@@ -259,8 +320,13 @@ instr setHand
 	gkHands[p4] = p5
 endin
 
-
+instr reverb2
+	aSig, aDummy reverbsc gaRSend2, gaRSend2, 0.95, 2000
+	out aSig * gkHands[13] * 0.6
+	gaRSend2 = 0
+endin
 schedule "reverb", 0, 999999999999
+schedule "reverb2", 0,999999999999
 schedule "delay", 0, 999999999999
 </CsInstruments>
 <CsScore>
