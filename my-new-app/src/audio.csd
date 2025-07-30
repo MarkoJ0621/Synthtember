@@ -28,6 +28,11 @@ nchnls = 1
 ;12) pad variance odds decreased
 ;13) same for other pad ^^
 ;14) another reverb for depth with all pads and melody
+;15) lead distorted
+;16) flanger on main reverb
+;17) iother lead distorted
+;18) pvsfreeze thing on pad
+;19) wack harmony on melody
 seed 0
 gifn	ftgen	0,0, 257, 9, .5,1,270
 gaRSend init 0
