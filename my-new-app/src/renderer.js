@@ -1,4 +1,3 @@
-import './index.css';
 import { run } from "./visuals.js";
 import { trackHands } from './tracking.js';
 import { p5Instance } from './visuals.js';

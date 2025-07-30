@@ -29,6 +29,7 @@ nchnls = 1
 ;13) same for other pad ^^
 ;14) another reverb for depth with all pads and melody
 seed 0
+gifn	ftgen	0,0, 257, 9, .5,1,270
 gaRSend init 0
 gaRSend2 init 0
 gkNotes[] fillarray 0, 7, -7, 4, -5, 5, 12, 19
@@ -80,6 +81,7 @@ instr triggers
 			event "i", "melody", 0, 2, gkFreq, kCounter,0
 			kCounter = kCounter * 2/3
 		endif
+		
 		if gkmetro2 == 1 then
 			kNotePlay random 0, 10
 				if kNotePlay > 6 then
@@ -143,7 +145,11 @@ instr melodyNotes
 	if kmetro3 == 1 && kCounter != p4 then
 		kNote random 0, 7
 		if gkHands[0] == 1 then
-		event "i", "melody", 0, 3, gkFreq + gkNotes[kNote],0.7,1
+			event "i", "melody", 0, 3, gkFreq + gkNotes[kNote],0.7,1
+			if gkHands[18] == 1 then
+				event "i", "melody", 0, 3, gkFreq + gkNotes[kNote]-7,0.7,1
+				event "i", "melody", 0, 3, gkFreq + gkNotes[kNote]-14,0.7,1
+			endif
 		endif
 		if kNote % 2 == 0 then
 			event "i", "sparkle", 0, 4, gkFreq + gkNotes[kNote],0.7
@@ -177,13 +183,19 @@ instr pad
 	aSum = ((aSig1 + aSig2 + aSig3 + aSig) * kEnv1 ) + ((aSig4 + aSig5 + aSig6 + aSigB) * kEnv2)
 	aFilt butterlp aSum, 800 + ((1000 * kLFO) + 400)
 	if kSpectralFlag == 1 then 
-			kbin  oscil 0.1,betarand(4,0,0) - 5, 1
+		kbin  oscil 0.1,betarand(4,0,0) - 5, 1
 		fSig pvsanal aFilt, 1024, 256, 2048, 0
 		printk2 gkFreq
 		fThing pvsarp fSig, kbin, 0.5, 5
 		aOut pvsynth fThing
 		out aOut
 		gaRSend = aOut * 0.08
+		if gkHands[17] == 1 then
+			ktrig oscil     3, 2, 1                   ; trigger
+			fThing pvsfreeze fSig, abs(ktrig), abs(ktrig)
+			aFreeze pvsynth fThing
+			out aFreeze
+		endif
 	else
 		out aFilt
 		gaRSend = aFilt * 0.1 * gkHands[1]
@@ -254,7 +266,14 @@ instr otherLead
 	aEnv      adsr 2,1,.7,3
 	aSum = aSig1 + aSig2
 	aOut, aDummy reverbsc aSum, aSum, 0.95, 20000,sr, 0
-	outs aOut * 0.2 * aEnv * gkHands[6]
+	if gkHands[14] == 1 then 
+		kLFO lfo 0.1, 1 
+		aFilt reson aOut, 1000 * (kLFO*1000),300
+		kEnv line 1, 4, 0.0001
+		out aFilt * 0.02 * kEnv
+	else 
+		out aOut * 0.2 * aEnv * gkHands[6]
+	endif
 endin
 
 
@@ -265,9 +284,15 @@ instr sparkle
 	aSig vco2 0.2, kFreq * 3, 12
 	aSig2 vco2 0.1, kFreq * 1.5, 12
 	aSum butterlp aSig + aSig2, kFreq*2
-	out 0.7 * aSum *kEnv * gkHands[5]
 	gaRSend  += aSum * 1 * kEnv * gkHands[5]
 	gaDSig   += aSum * 0.2 * kEnv * gkHands[5]
+	if gkHands[16] == 1 then 
+		kLFO lfo 0.1,1
+		aOut distort aSum, kLFO, gifn
+		out aOut*0.7 * kEnv 
+	else
+		out 0.7 * aSum *kEnv * gkHands[5]
+	endif
 endin
 
 
@@ -312,6 +337,12 @@ instr reverb
 	fFDSig pvsanal aSig, 1024, 256, 2056, 0
 	fPitched pvshift fFDSig, cpsmidinn(gkFreq),0
 	aOut pvsynth fPitched
+	if gkHands[15] == 1 then 
+		adel linseg 0, p3*.5, 0.02, p3*.5, 0	;max delay time =20ms
+		aflg flanger aSig, adel, .99
+		asig clip aflg, 1, 1
+		out asig * 0.2
+	endif
 	out (aOut + aSig)  * gkHands[1]
 	gaRSend = 0
 endin
@@ -322,7 +353,7 @@ endin
 
 instr reverb2
 	aSig, aDummy reverbsc gaRSend2, gaRSend2, 0.95, 2000
-	out aSig * gkHands[13] * 0.6
+	out aSig * gkHands[13] * 0.2
 	gaRSend2 = 0
 endin
 schedule "reverb", 0, 999999999999
