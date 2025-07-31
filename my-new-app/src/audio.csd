@@ -33,6 +33,8 @@ nchnls = 1
 ;17) iother lead distorted
 ;18) pvsfreeze thing on pad
 ;19) wack harmony on melody
+;20) BIG sparkle
+;21) crunch texture addition
 seed 0
 gifn	ftgen	0,0, 257, 9, .5,1,270
 gaRSend init 0
@@ -50,6 +52,7 @@ instr triggers
 	gkmetro4 metro 2
 	gkmetro3 metro 0.3
 	gkmetro2 metro 1
+	gkmetro5 metro 3
 	kMetro4Counter init 0
 	if gkmetro == 1 then
 		kCounter = 1
@@ -137,6 +140,15 @@ instr triggers
 				turnoff2 4, 0, 0
 				event "i", "bassySound", 0,6,gkFreq - 24 + gkNotes[floor(krandom4)],random(0,100),1
 				kMetro4Counter = 0
+			endif
+		endif
+	endif
+	if gkmetro5 == 1 then 
+		if gkHands[20] == 1 then 
+			kHarmonyTest random 0, 10
+			printk2 kHarmonyTest
+			if kHarmonyTest > 8 then 
+				event "i", "texture", 0, 1.5
 			endif
 		endif
 	endif
@@ -228,13 +240,12 @@ instr descendingLine
 	kCounter init 0
 	while kCounter < 6 do
 	kTest = (floor(gkFreq + 1) - (kCounter * -7)) - 36
-	printk2 kTest
-		if (kCounter % 2) == 1 then
-			event "i", "bassySound", (6 - kCounter + 1)* 0.5, 1, floor(kTest),kCounter * 50,0
-		else
-			event "i", "bassySound", (6 - kCounter + 1)* 0.5, 1, floor(kTest),kCounter * 50,0
-		endif
-		kCounter += 1
+	if (kCounter % 2) == 1 then
+		event "i", "bassySound", (6 - kCounter + 1)* 0.5, 1, floor(kTest),kCounter * 50,0
+	else
+		event "i", "bassySound", (6 - kCounter + 1)* 0.5, 1, floor(kTest),kCounter * 50,0
+	endif
+	kCounter += 1
 	od
 endin
 
@@ -288,7 +299,13 @@ instr sparkle
 	kEnv adsr 0.01, 3 ,0,1
 	aSig vco2 0.2, kFreq * 3, 12
 	aSig2 vco2 0.1, kFreq * 1.5, 12
-	aSum butterlp aSig + aSig2, kFreq*2
+	aSig3 vco2 0.1, kFreq * 2.9, 12
+	aSig4 vco2 0.1, kFreq/4, 12
+	if gkHands[19] == 1 then 
+		aSum butterlp (aSig + aSig2 + aSig3 + aSig4) * 0.6, kFreq * 2
+	else
+		aSum butterlp aSig + aSig2, kFreq*2
+	endif
 	gaRSend  += aSum * 1 * kEnv * gkHands[5]
 	gaDSig   += aSum * 0.2 * kEnv * gkHands[5]
 	if gkHands[16] == 1 then 
@@ -308,7 +325,7 @@ instr otherPad
 	if kADSRFlag == 1 then 
 		aEnv adsr 2,5,0.3,8
 	else 
-		aEnv      adsr 2,1,.7,3
+		aEnv adsr 2,1,.7,3
 	endif
 	aSig1       poscil    .2,kFreq ,1
 	aSig2      poscil    .2,kFreq*2 ,1
@@ -324,7 +341,19 @@ instr otherPad
 	out  0.7 *   aSig*aEnv * gkHands[4]
 	gaRSend2 = gaRSend2 + (aSig * 02)
 endin
-  
+
+
+instr texture
+	aSig noise 0.1,0
+	kEnv adsr 0.01, 1.5, 0, 0.1
+	aFilt butterlp aSig, 1000 * noise(0.1,0) + 1000 + (kEnv * 500)
+	aTrig noise 1, 0
+	kEnv2 adsr 0.9,0.1,1,0.5
+	if k(aTrig) > 0.4 then
+		aBrah exciter aFilt, 100,20000,10,10
+		out aBrah * kEnv * 6
+	endif
+endin
   
   
 instr delay
