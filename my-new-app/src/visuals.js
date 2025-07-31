@@ -18,7 +18,16 @@ setInterval(() => {
 setInterval(() => {
     smoothRepeat += (targetRepeat - smoothRepeat) * 0.003
 }, 16)
-
+function feedbackNoise() {
+    return shape(4)
+        .layer(shape(1).repeatX(10).thresh(0.4))
+        .color(1, 1, 1, 1)
+        .scrollY(0.1, 1)
+        .repeat(30, 30, 0, 0)
+        .mask(noise(4))
+        .modulate(src(o0))
+        .luma(0.2)
+}
 function morphingRepeat() {
     return gradient(2)
         .colorama(1)
@@ -28,50 +37,54 @@ function morphingRepeat() {
 
 export function run(skew, handCount) {
     if (handCount > 0 && handCount <= 1) {
-        shape(4)
-            .layer(shape(1).repeatX(10).thresh(0.4))
-            .color(1, 1, 0, 1)
-            .scrollY(0.1, 1)
-            .repeat(30, 30, 0, 0)
-            .mask(noise(4))
-            .modulate(src(o0))
-            .out(o0)
+        feedbackNoise().out();
     } else if (handCount > 1 && handCount <= 4) {
-        osc(5, 0.9, () => Math.sin(time * 0.3))
-            .colorama(skew)
-            .modulateRotate(o0, () => Math.sin(time * 0.2) * 3.5)
-            .modulatePixelate(noise().pixelate(10), 16, 500)
-            .layer(src(s0).contrast(1.6).luma(0.5, 0.2).scale(1, -1, 1, 0, 0))
-            .modulateHue(o0, handCount)
-            .out()
-
+        console.log(skew);
         shape(4)
             .layer(shape(1).repeatX(10).thresh(0.4))
-            .color(1, 1, 0, 1)
+            .color(skew, skew, skew * .5, 1)
             .scrollY(0.1, 1)
             .repeat(30, 30, 0, 0)
             .mask(noise(4))
-            .modulate(src(o0)).layer(src(s0).contrast(1.6).luma(0.5, 0.2).scale(1, -1, 1, 0, 0))
+            .modulate(src(o0).invert())
             .out(o0)
-    } else if (handCount > 4 && handCount <= 7) {
+    } else if (handCount > 4 && handCount <= 7) { //TODO: build some cool fades between the things to introduce the more noise
+        if (handCount > 4 && handCount <= 7) {
+            console.log('poggers')
 
-        function layerThing() {
-            return noise().modulate(noise()).thresh(0.4).pixelate(400).modulateRotate(noise(), () => 130 + Math.sin(time) * 100)
+            function layerThing() {
+                return noise()
+                    .modulate(noise())
+                    .thresh(0.4)
+                    .pixelate(400)
+                    .modulateRotate(noise(), () => 130 + Math.sin(time) * 100);
+            }
+
+            function otherWebCam() {
+                return src(s0)
+                    .scale(1, -1, 1, 0, 0)
+                    .luma(0.4, 0)
+                    .thresh(0.7);
+            }
+
+            const shapeLayer = shape(4)
+                .layer(
+                    shape(1)
+                        .repeatX(10)
+                        .thresh(0.4)
+                )
+                .color(skew, skew, skew * 0.5, 1)
+                .scrollY(0.1, 1)
+                .repeat(30, 30, 0, 0)
+                .mask(noise(4))
+                .modulate(src(o0).invert());
+
+            layerThing()
+                .layer(shapeLayer)
+                .out(o0);
         }
 
-
-        function otherWebCam() {
-            return src(s0).scale(1, -1, 1, 0, 0)
-                .luma(0.4, 0).thresh(0.7)
-        }
-
-
-        layerThing().layer(otherWebCam()).out()
-
-    }
-
-
-
+    } //TODO ADD NOISE FEEDBACK WEBCAM FEED TO INTRODUCE THAT STUFF
     else if (handCount > 7 && handCount < 11) {
         src(s0).thresh(0.4).luma(0.2).brightness(-0.5).out(o1)
         console.log(skew);
