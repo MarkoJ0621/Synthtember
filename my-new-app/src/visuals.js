@@ -28,11 +28,14 @@ function morphingRepeat() {
 
 export function run(skew, handCount) {
     if (handCount > 0 && handCount <= 1) {
-        osc(5, 0.9, () => Math.sin(time * 0.3))
-            .colorama(skew)
-            .modulate(morphingRepeat(), 0.1)
-            .modulateRotate(o0, () => Math.sin(time * 0.2))
-            .out()
+        shape(4)
+            .layer(shape(1).repeatX(10).thresh(0.4))
+            .color(1, 1, 0, 1)
+            .scrollY(0.1, 1)
+            .repeat(30, 30, 0, 0)
+            .mask(noise(4))
+            .modulate(src(o0))
+            .out(o0)
     } else if (handCount > 1 && handCount <= 4) {
         osc(5, 0.9, () => Math.sin(time * 0.3))
             .colorama(skew)
@@ -41,6 +44,15 @@ export function run(skew, handCount) {
             .layer(src(s0).contrast(1.6).luma(0.5, 0.2).scale(1, -1, 1, 0, 0))
             .modulateHue(o0, handCount)
             .out()
+
+        shape(4)
+            .layer(shape(1).repeatX(10).thresh(0.4))
+            .color(1, 1, 0, 1)
+            .scrollY(0.1, 1)
+            .repeat(30, 30, 0, 0)
+            .mask(noise(4))
+            .modulate(src(o0)).layer(src(s0).contrast(1.6).luma(0.5, 0.2).scale(1, -1, 1, 0, 0))
+            .out(o0)
     } else if (handCount > 4 && handCount <= 7) {
 
         function layerThing() {
