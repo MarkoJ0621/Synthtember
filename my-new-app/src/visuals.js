@@ -26,7 +26,6 @@ function feedbackNoise() {
         .repeat(30, 30, 0, 0)
         .mask(noise(4))
         .modulate(src(o0))
-        .luma(0.2)
 }
 function morphingRepeat() {
     return gradient(2)
@@ -43,54 +42,61 @@ function layerThing() {
         .modulateRotate(noise(), () => 130 + Math.sin(time) * 100);
 }
 
+function angelic() {
+    return shape(4)
+        .layer(shape(1).repeatX(10).thresh(0.4))
+        .scrollY(0.1, 1)
+        .repeat(30, 30, 0, 0)
+        .mask(noise(4))
+        .modulate(src(o0).invert())
+}
+
+function noiseTest() {
+    return noise(1)
+}
+const shapeLayer = shape(4)
+    .layer(
+        shape(1)
+            .repeatX(10)
+            .thresh(0.4)
+    )
+    .scrollY(0.1, 1)
+    .repeat(30, 30, 0, 0)
+    .mask(noiseTest())
+    .modulateRotate(src(o0).invert());
 export function run(skew, handCount) {
-    if (handCount > 0 && handCount <= 1) {
-        feedbackNoise().out();
-    } else if (handCount > 1 && handCount <= 4) {
-        console.log(skew);
-        shape(4)
-            .layer(shape(1).repeatX(10).thresh(0.4))
-            .color(skew, skew, skew * .5, 1)
+
+    if (handCount > 1 && handCount <= 2) {
+        angelic().out()
+
+    }
+    else if (handCount > 2 && handCount <= 4) {
+        shapeLayer.out()
+    }
+    else if (handCount > 4 && handCount <= 7) { //TODO: build some cool fades between the things to introduce the more noise
+
+        function otherWebCam() {
+            return src(s0)
+                .scale(1, -1, 1, 0, 0)
+                .luma(0.4, 0)
+                .thresh(0.7);
+        }
+
+        const shapeLayer = shape(4)
+            .layer(
+                shape(1)
+                    .repeatX(10)
+                    .thresh(0.4)
+            )
+            .color(skew, skew, skew * 0.5, 1)
             .scrollY(0.1, 1)
             .repeat(30, 30, 0, 0)
             .mask(noise(4))
-            .modulate(src(o0).invert())
-            .out(o0)
-    } else if (handCount > 4 && handCount <= 7) { //TODO: build some cool fades between the things to introduce the more noise
-        if (handCount > 4 && handCount <= 7) {
+            .modulate(src(o0).invert());
 
-            function layerThing() {
-                return noise()
-                    .modulate(noise())
-                    .thresh(0.4)
-                    .pixelate(400)
-                    .modulateRotate(noise(), () => 130 + Math.sin(time) * 100);
-            }
-
-            function otherWebCam() {
-                return src(s0)
-                    .scale(1, -1, 1, 0, 0)
-                    .luma(0.4, 0)
-                    .thresh(0.7);
-            }
-
-            const shapeLayer = shape(4)
-                .layer(
-                    shape(1)
-                        .repeatX(10)
-                        .thresh(0.4)
-                )
-                .color(skew, skew, skew * 0.5, 1)
-                .scrollY(0.1, 1)
-                .repeat(30, 30, 0, 0)
-                .mask(noise(4))
-                .modulate(src(o0).invert());
-
-            layerThing()
-                .layer(shapeLayer)
-                .out(o0);
-        }
-
+        layerThing()
+            .layer(shapeLayer)
+            .out(o0);
     } //TODO ADD NOISE FEEDBACK WEBCAM FEED TO INTRODUCE THAT STUFF
     else if (handCount > 7 && handCount < 11) {
 
@@ -119,19 +125,7 @@ export function run(skew, handCount) {
     }
     else if (handCount > 11 || handCount < 15) {
 
-        function noiseTest() {
-            return noise(1)
-        }
-        const shapeLayer = shape(4)
-            .layer(
-                shape(1)
-                    .repeatX(10)
-                    .thresh(0.4)
-            )
-            .scrollY(0.1, 1)
-            .repeat(30, 30, 0, 0)
-            .mask(noiseTest())
-            .modulateRotate(src(o0).invert());
+
 
 
         const shapeLayer2 = shape(4)
