@@ -73,30 +73,12 @@ export function run(skew, handCount) {
     else if (handCount > 2 && handCount <= 4) {
         shapeLayer.out()
     }
+    else if (handCount > 4 && handCount < 6) {
+        layerThing().mask(noise(1)).add(shapeLayer).out()
+    }
     else if (handCount > 4 && handCount <= 7) { //TODO: build some cool fades between the things to introduce the more noise
-
-        function otherWebCam() {
-            return src(s0)
-                .scale(1, -1, 1, 0, 0)
-                .luma(0.4, 0)
-                .thresh(0.7);
-        }
-
-        const shapeLayer = shape(4)
-            .layer(
-                shape(1)
-                    .repeatX(10)
-                    .thresh(0.4)
-            )
-            .color(skew, skew, skew * 0.5, 1)
-            .scrollY(0.1, 1)
-            .repeat(30, 30, 0, 0)
-            .mask(noise(4))
-            .modulate(src(o0).invert());
-
-        layerThing()
-            .layer(shapeLayer)
-            .out(o0);
+        console.log("raaaa")
+        layerThing().layer(shapeLayer.luma(0.4))
     } //TODO ADD NOISE FEEDBACK WEBCAM FEED TO INTRODUCE THAT STUFF
     else if (handCount > 7 && handCount < 11) {
 
