@@ -10,14 +10,21 @@ s0.initCam()
 
 let targetRepeat = 1
 let smoothRepeat = 1
+let fadeTest = 0
+let fadeFlag = 0
+let lumaVal = 0;
+let fadeAlpha = 1;
+let fadeStarted = false;
+let fadeInterval = null;
 
 setInterval(() => {
     targetRepeat = Math.floor(Math.random() * 4) + 1
-}, 500)
+}, 4000)
 
 setInterval(() => {
-    smoothRepeat += (targetRepeat - smoothRepeat) * 0.003
+    smoothRepeat += (targetRepeat - smoothRepeat) * 0.012
 }, 16)
+
 function feedbackNoise() {
     return shape(4)
         .layer(shape(1).repeatX(10).thresh(0.4))
@@ -51,6 +58,18 @@ function angelic() {
         .modulate(src(o0).invert())
 }
 
+const shapeLayer2 = shape(4)
+    .layer(
+        shape(1)
+            .repeatX(10)
+            .thresh(0.4)
+    )
+    .scrollY(0.1, 1)
+    .repeat(30, 30, 0, 0)
+    .mask(noiseTest()).invert()
+    .modulateRotate(src(o0).invert());
+
+
 function noiseTest() {
     return noise(1)
 }
@@ -65,6 +84,14 @@ const shapeLayer = shape(4)
     .mask(noiseTest())
     .modulateRotate(src(o0).invert());
 export function run(skew, handCount) {
+    // Reset fade when leaving the 7-11 handCount range
+    if ((handCount <= 7 || handCount >= 11) && fadeStarted) {
+        fadeStarted = false;
+        if (fadeInterval) {
+            clearInterval(fadeInterval);
+            fadeInterval = null;
+        }
+    }
 
     if (handCount > 1 && handCount <= 2) {
         angelic().out()
@@ -74,55 +101,55 @@ export function run(skew, handCount) {
         shapeLayer.out()
     }
     else if (handCount > 4 && handCount < 6) {
+        console.log("here")
         layerThing().mask(noise(1)).add(shapeLayer).out()
     }
-    else if (handCount > 4 && handCount <= 7) { //TODO: build some cool fades between the things to introduce the more noise
-        console.log("raaaa")
-        layerThing().layer(shapeLayer.luma(0.4))
-    } //TODO ADD NOISE FEEDBACK WEBCAM FEED TO INTRODUCE THAT STUFF
+    else if (handCount > 4 && handCount <= 7) {
+        layerThing().mask(noise(1)).add(shapeLayer).modulate(src(s0).scale(1, -1, 1, 1)).out()
+    }
     else if (handCount > 7 && handCount < 11) {
+        // Start fade when entering this handCount range
+        if (!fadeStarted) {
+            fadeStarted = true;
+            fadeAlpha = 1; // Reset to start value
 
-        function otherWebCam() {
-            return src(s0)
-                .scale(1, -1, 1, 0, 0)
-                .luma(0.4, 0)
-                .thresh(0.7);
+            // Clear any existing interval
+            if (fadeInterval) {
+                clearInterval(fadeInterval);
+            }
+
+            // Start the fade
+            fadeInterval = setInterval(() => {
+                if (fadeAlpha > 0) {
+                    fadeAlpha = Math.max(0, fadeAlpha - 0.01);
+                } else {
+                    clearInterval(fadeInterval);
+                    fadeInterval = null;
+                }
+            }, 50);
         }
 
-        const shapeLayer = shape(4)
-            .layer(
-                shape(1)
-                    .repeatX(10)
-                    .thresh(0.4)
-            )
-            .color(skew, skew, skew * 0.5, 1)
-            .scrollY(0.1, 1)
-            .repeat(30, 30, 0, 0)
-            .mask(noise(1))
-            .modulateRotate(src(o0).invert());
-
-        layerThing()
-            .layer(shapeLayer).modulate(src(s0).scale(1, -1, 1, 1))
-            .out(o0);
+        // layerThing().mask(layerThing().invert().luma(0.4)).modulate(src(s0).scale(1, -1, 1, 1)).layer(shapeLayer.luma(0.2)).out()
+        layerThing().add(shapeLayer).modulate(src(s0).scale(1, -1, 1, 1)).color(1, 1, 1, () => 1.0 - fadeAlpha).layer(layerThing().mask(noise(1)).add(shapeLayer).modulate(src(s0).scale(1, -1, 1, 1)).color(1, 1, 1, () => fadeAlpha)).out()
+        layerThing().add(shapeLayer).modulate(src(s0).scale(1, -1, 1, 1)).color(1, 1, 1, () => 1.0 - fadeAlpha).out()
+        console.log(fadeAlpha);
     }
-    else if (handCount > 11 || handCount < 15) {
-
-
-
-
-        const shapeLayer2 = shape(4)
-            .layer(
-                shape(1)
-                    .repeatX(10)
-                    .thresh(0.4)
-            )
-            .scrollY(0.1, 1)
-            .repeat(30, 30, 0, 0)
-            .mask(noiseTest()).invert()
-            .modulateRotate(src(o0).invert());
-
+    else if (handCount > 11 && handCount < 15) {
         layerThing()
             .layer(shapeLayer).modulate(src(s0).scale(1, -1, 1, 1)).layer(src(s0).thresh(0.4).invert().luma(0.4).contrast(0.8)).out()
+    }
+    else if (handCount >= 15 && handCount < 18) {
+        console.log("u've been morphed ")
+        layerThing()
+            .layer(shapeLayer).layer(src(s0).thresh(0.4).invert().luma(0.4).contrast(0.8).modulate(src(s0), 1)).out()
+    } else if (handCount >= 18 && handCount < 21) {
+        console.log("bro......double Morphed");
+        layerThing()
+            .layer(shapeLayer).layer(src(s0).scale(1, -1, 1, 1).thresh(0.4).invert().luma(0.4).contrast(0.8).modulate(src(s0), () => Math.sin(smoothRepeat))).out()
+    } else {
+        console.log("bro......double Morphed");
+        layerThing()
+            .layer(shapeLayer).scrollY(0, () => targetRepeat / 4).layer(src(s0).thresh(0.4).invert().luma(0.4).contrast(0.8).modulate(src(s0).scale(1, -1, 1, 1), () => Math.sin(smoothRepeat))).out()
     }
 }
 
