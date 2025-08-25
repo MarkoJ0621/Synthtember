@@ -47,11 +47,7 @@ gkNotes[] fillarray 0, 7, -7, 4, -5, 5, 12, 19
 gkInteract[] fillarray 0,2,4,5,7,11,12,14,16
 gkHands[] init 30
 gkHandsLeads[] init 4
-<<<<<<< HEAD
 gkIndex init 0
-=======
-gkIndex init 0 
->>>>>>> parent of 7cb5f88 (Revert "Reapply "Reapply "idk im gna crash out""")
 instr triggers
    kThreshold init 10
    kThreshold2 init 10
