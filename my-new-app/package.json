@@ -3,31 +3,13 @@
   "productName": "my-new-app",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": ".webpack/main.js",
+  "main": ".webpack/main/main",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "build": "npm run webpack && electron-builder",
-    "webpack": "webpack --config webpack.main.config.js && webpack --config webpack.renderer.config.js",
-    "dist": "npm run build",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
-  },
-  "build": {
-    "appId": "com.yourname.my-new-app",
-    "productName": "My New App",
-    "directories": {
-      "output": "dist"
-    },
-    "files": [
-      ".webpack/**/*",
-      "src/**/*",
-      "node_modules/**/*"
-    ],
-    "mac": {
-      "target": "dmg"
-    }
   },
   "keywords": [],
   "author": {
@@ -49,10 +31,8 @@
     "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^6.11.0",
     "electron": "36.4.0",
-    "electron-builder": "^26.0.12",
     "node-loader": "^2.1.0",
-    "style-loader": "^3.3.4",
-    "webpack-cli": "^6.0.1"
+    "style-loader": "^3.3.4"
   },
   "dependencies": {
     "@csound/browser": "^6.18.7",
