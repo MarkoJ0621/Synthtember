@@ -40,7 +40,10 @@ gifn	ftgen	0,0, 257, 9, .5,1,270
 gaRSend init 0
 gaRSend2 init 0
 gkNotes[] fillarray 0, 7, -7, 4, -5, 5, 12, 19
+gkInteract[] fillarray 0,2,4,5,7,11,12,14,16
 gkHands[] init 30
+gkHandsLeads[] init 4
+gkIndex init 0 
 instr triggers
 	kThreshold init 10
 	kThreshold2 init 10
@@ -175,7 +178,16 @@ instr melodyNotes
 	endif
 endin
 
-
+instr interactiveLead
+	printk2 gkIndex
+	aHand1 oscil 0.3, cpsmidinn(gkFreq + gkHandsLeads[0])
+	aHand2 oscil 0.3, cpsmidinn(gkFreq + gkHandsLeads[1])
+	aHand3 oscil 0.3, cpsmidinn(gkFreq + gkHandsLeads[2])
+	aHand4 oscil 0.3, cpsmidinn(gkFreq + gkHandsLeads[3])
+	printk2 gkHandsLeads[1]
+	aSum = aHand1 + aHand2 + aHand3 + aHand4
+	out aSum
+endin
 
 instr pad
 	gkFreq = p4
@@ -390,9 +402,15 @@ instr reverb2
 	out aSig * gkHands[13] * 0.2
 	gaRSend2 = 0
 endin
+
+instr setNote 
+	gkHandsLeads[p4] = p5
+endin
 schedule "reverb", 0, 999999999999
 schedule "reverb2", 0,999999999999
 schedule "delay", 0, 999999999999
+schedule "interactiveLead", 0, 999999999999
+
 </CsInstruments>
 <CsScore>
 f 1 0 16384 11 1
