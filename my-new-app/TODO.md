@@ -1,0 +1,4 @@
+- interactive lead melody 
+- more visuals 
+- balance dynamics of csound
+- woohoo
