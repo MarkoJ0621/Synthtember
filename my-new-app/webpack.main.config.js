@@ -4,8 +4,8 @@ module.exports = {
   entry: './src/main.js',
   target: 'electron-main',
   output: {
-    filename: 'main.js', // ✅ prevent name conflict
-    path: path.resolve(__dirname, '.webpack/main')
+    filename: 'index.js',   // 👈 rename from main.js → index.js
+    path: path.resolve(__dirname, '.webpack/main'),
   },
   module: {
     rules: [
