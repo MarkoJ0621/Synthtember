@@ -1,6 +1,9 @@
 const { app, BrowserWindow, ipcMain, session } = require('electron');
 const path = require('node:path');
 const { spawn, fork } = require('child_process');
+const remoteMain = require('@electron/remote/main');
+
+remoteMain.initialize();
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -42,7 +45,7 @@ app.whenReady().then(() => {
 
   // Spawn the Csound child process
   const csdPath = path.join(app.getAppPath(), 'src', 'audio.csd');
-  csoundProcess = spawn('csound', ['-odac13', '-L', 'stdin', csdPath]);
+  csoundProcess = spawn('/opt/homebrew/bin/csound', ['-odac13', '-L', 'stdin', csdPath]);
 
   csoundProcess.stdout.on('data', (data) => {
     console.log(`Csound: ${data.toString()}`);
