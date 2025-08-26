@@ -45,9 +45,12 @@ function sendToCsound(message) {
 //     for (let i = 0; i < handCount; i++) {
 //         const xPos = window.innerWidth - hands[i].x * window.innerWidth;
 //         const yPos = hands[i].y * window.innerHeight;
+//         const yPosRaw = hands[i].y
+//         const xPosRaw = hands[i].x
 //         p5Instance.addHandPosition(xPos, yPos);
+//         sendToCsound(`i "setNote" 0 0.01 ${i} ${11 - Math.round(yPosRaw * 10)}`);
+//         console.log(`i "setNote" 0 0.01 ${i} ${11 - Math.round(yPosRaw * 10)}`);
 //     }
-
 //     run(y, handCount + testCount);
 // });
 
@@ -62,6 +65,8 @@ function sendToCsound(message) {
 //         prevCount = currentCount;
 //     }
 // }
+
+
 
 // Manually change hand count for testing
 function increaseHandCount() {
