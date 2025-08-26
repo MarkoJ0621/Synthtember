@@ -47,6 +47,7 @@ gkNotes[] fillarray 0, 7, -7, 4, -5, 5, 12, 19
 gkInteract[] fillarray 0,2,4,5,7,11,12,14,16
 gkHands[] init 30
 gkHandsLeads[] init 4
+gkHandsLeadsVol[] init 4 
 gkIndex init 0
 instr triggers
    kThreshold init 10
@@ -189,11 +190,11 @@ endin
 
 
 instr interactiveLead
-   printk2 gkIndex
-   aHand1 oscil 0.3, cpsmidinn(gkFreq + gkHandsLeads[0])
-   aHand2 oscil 0.3, cpsmidinn(gkFreq + gkHandsLeads[1])
-   aHand3 oscil 0.3, cpsmidinn(gkFreq + gkHandsLeads[2])
-   aHand4 oscil 0.3, cpsmidinn(gkFreq + gkHandsLeads[3])
+   kEnv line 0.3,4,0.0001
+   aHand1 oscil gkHandsLeadsVol[0], cpsmidinn(gkFreq + gkHandsLeads[0])
+   aHand2 oscil gkHandsLeadsVol[1], cpsmidinn(gkFreq + gkHandsLeads[1])
+   aHand3 oscil gkHandsLeadsVol[2], cpsmidinn(gkFreq + gkHandsLeads[2])
+   aHand4 oscil gkHandsLeadsVol[3], cpsmidinn(gkFreq + gkHandsLeads[3])
    printk2 gkHandsLeads[1]
    aSum = aHand1 + aHand2 + aHand3 + aHand4
    out aSum
@@ -439,6 +440,11 @@ endin
 
 instr setNote
    gkHandsLeads[p4] = p5
+endin
+
+instr setNoteVol 
+        kEnv line 0.3-p5,p3,p5 
+    gkHandsLeadsVol[p4] = kEnv
 endin
 schedule "reverb", 0, 999999999999
 schedule "reverb2", 0,999999999999

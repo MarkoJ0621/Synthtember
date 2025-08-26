@@ -16,7 +16,7 @@ const createWindow = () => {
     height: 1964,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, // Make sure this is set correctly by your bundler
-      nodeIntegration: false,
+      nodeIntegration: true,
       contextIsolation: true, // Important for contextBridge in preload
       webSecurity: false,
     },
@@ -42,7 +42,7 @@ app.whenReady().then(() => {
 
   // Spawn the Csound child process
   const csdPath = path.join(app.getAppPath(), 'src', 'audio.csd');
-  csoundProcess = spawn('/opt/homebrew/bin/csound', ['-odac13', '-L', 'stdin', csdPath]);
+  csoundProcess = spawn('/opt/homebrew/bin/csound', ['-odac2', '-L', 'stdin', csdPath]);
 
   csoundProcess.stdout.on('data', (data) => {
     console.log(`Csound: ${data.toString()}`);

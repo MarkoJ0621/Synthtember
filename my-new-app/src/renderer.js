@@ -10,6 +10,7 @@ let posRefresh = 10;
 let skew = 0;
 let prevCount = 0;
 let testCount = 0;
+let prevHandCount = 0;
 
 
 // Send Csound message through IPC
@@ -24,40 +25,62 @@ function sendToCsound(message) {
 
 // Hand tracking logic
 const stopTracking = await trackHands(({ handCount, hands }) => {
-    counter += 1;
+    counter = (counter + 1) % posRefresh;
 
-
-    if (counter === posRefresh) {
-        counter = 0;
-        if (handCount !== 0) {
-            skew = 0;
-            for (let i = 0; i < hands.length; i++) {
-                skew += 0.5 - hands[i].x;
-            }
-            y = skew;
-        } else {
-            y = 0;
-        }
+    if (counter === 0) {
+        y = (handCount > 0)
+            ? hands.reduce((sum, h) => sum + (0.5 - h.x), 0)
+            : 0;
         updateHandCount(handCount);
     }
-
 
     if (handCount === 0) {
         p5Instance.noNewPositions();
     }
 
+    handleHandPositions(hands);
+    updateNotes(handCount, hands);
+    handleHandCountChange(handCount);
 
-    for (let i = 0; i < handCount; i++) {
-        const xPos = window.innerWidth - hands[i].x * window.innerWidth;
-        const yPos = hands[i].y * window.innerHeight;
-        const yPosRaw = hands[i].y
-        const xPosRaw = hands[i].x
-        p5Instance.addHandPosition(xPos, yPos);
-        sendToCsound(`i "setNote" 0 0.01 ${i} ${11 - Math.round(yPosRaw * 10)}`);
-        console.log(`i "setNote" 0 0.01 ${i} ${11 - Math.round(yPosRaw * 10)}`);
-    }
     run(y, handCount + testCount);
 });
+
+// --- helpers ---
+
+function handleHandPositions(hands) {
+    for (const h of hands) {
+        const xPos = window.innerWidth - h.x * window.innerWidth;
+        const yPos = h.y * window.innerHeight;
+        p5Instance.addHandPosition(xPos, yPos);
+
+        const pitch = 11 - Math.round(h.y * 10);
+        sendToCsound(`i "setNote" 0 0.01 ${hands.indexOf(h)} ${pitch}`);
+    }
+}
+
+function updateNotes(handCount, hands) {
+    // Turn off extra notes above current hand count
+    for (let i = 3; i >= handCount; i--) {
+        sendToCsound(`i "setNoteVol" 0 0.7 ${i} 0`);
+    }
+}
+
+function handleHandCountChange(handCount) {
+    if (handCount === prevHandCount) return;
+
+    prevHandCount = handCount;
+
+    // Fade in active hands
+    for (let i = 0; i < handCount; i++) {
+        sendToCsound(`i "setNoteVol" 0 0.7 ${i} 0.3`);
+    }
+
+    // Fade out inactive hands
+    for (let i = 3; i >= handCount; i--) {
+        sendToCsound(`i "setNoteVol" 0 0.7 ${i} 0`);
+    }
+}
+
 
 
 // Update hand count in Csound
