@@ -150,6 +150,7 @@ export function run(skew, handCount) {
         console.log("bro......double Morphed");
         layerThing()
             .layer(shapeLayer).scrollY(0, () => targetRepeat / 4).layer(src(s0).thresh(0.4).invert().luma(0.4).contrast(0.8).modulate(src(s0).scale(1, -1, 1, 1), () => Math.sin(smoothRepeat))).out()
+            src(s0).scale(1,-1,1,1).out()
     }
 }
 

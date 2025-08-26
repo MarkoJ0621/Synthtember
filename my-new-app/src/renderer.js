@@ -13,6 +13,7 @@ let testCount = 0;
 // Send Csound message through IPC
 function sendToCsound(message) {
     if (window.csoundBridge) {
+        console.log("sebnding message to cvcsound:" + message);
         window.csoundBridge.send(message);
     } else {
         console.warn("csoundBridge not available");
@@ -20,47 +21,47 @@ function sendToCsound(message) {
 }
 
 // Hand tracking logic
-const stopTracking = await trackHands(({ handCount, hands }) => {
-    counter += 1;
+// const stopTracking = await trackHands(({ handCount, hands }) => {
+//     counter += 1;
 
-    if (counter === posRefresh) {
-        counter = 0;
-        if (handCount !== 0) {
-            skew = 0;
-            for (let i = 0; i < hands.length; i++) {
-                skew += 0.5 - hands[i].x;
-            }
-            y = skew;
-        } else {
-            y = 0;
-        }
-        updateHandCount(handCount);
-    }
+//     if (counter === posRefresh) {
+//         counter = 0;
+//         if (handCount !== 0) {
+//             skew = 0;
+//             for (let i = 0; i < hands.length; i++) {
+//                 skew += 0.5 - hands[i].x;
+//             }
+//             y = skew;
+//         } else {
+//             y = 0;
+//         }
+//         updateHandCount(handCount);
+//     }
 
-    if (handCount === 0) {
-        p5Instance.noNewPositions();
-    }
+//     if (handCount === 0) {
+//         p5Instance.noNewPositions();
+//     }
 
-    for (let i = 0; i < handCount; i++) {
-        const xPos = window.innerWidth - hands[i].x * window.innerWidth;
-        const yPos = hands[i].y * window.innerHeight;
-        p5Instance.addHandPosition(xPos, yPos);
-    }
+//     for (let i = 0; i < handCount; i++) {
+//         const xPos = window.innerWidth - hands[i].x * window.innerWidth;
+//         const yPos = hands[i].y * window.innerHeight;
+//         p5Instance.addHandPosition(xPos, yPos);
+//     }
 
-    run(y, handCount + testCount);
-});
+//     run(y, handCount + testCount);
+// });
 
-// Update hand count in Csound
-function updateHandCount(currentCount) {
-    if (currentCount !== prevCount) {
-        console.log("hand count changed");
-        for (let i = 0; i < 30; i++) {
-            const onOff = i < currentCount ? 1 : 0;
-            sendToCsound(`i "setHand" 0 0.01 ${i} ${onOff}`);
-        }
-        prevCount = currentCount;
-    }
-}
+// // Update hand count in Csound
+// function updateHandCount(currentCount) {
+//     if (currentCount !== prevCount) {
+//         console.log("hand count changed");
+//         for (let i = 0; i < 30; i++) {
+//             const onOff = i < currentCount ? 1 : 0;
+//             sendToCsound(`i "setHand" 0 0.01 ${i} ${onOff}`);
+//         }
+//         prevCount = currentCount;
+//     }
+// }
 
 // Manually change hand count for testing
 function increaseHandCount() {
