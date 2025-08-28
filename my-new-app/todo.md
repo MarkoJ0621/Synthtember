@@ -1,8 +1,8 @@
 ### things that really need to get done!
 
-- smoother transitions between visuals esp to do with hand misreadings, thing start twaeking
+- smoother transitions between visuals esp to do with hand misreadings, thing start twaeking (DEBOUNCING!!!!!!)
 
-- look at some edge detection and stuff to make the readings more accurate 
+- look at some edge detection and stuff to make the readings more accurate (done 4 now, need to test doe)
 
 - test with a buncha hands 
 

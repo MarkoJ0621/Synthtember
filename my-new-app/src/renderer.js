@@ -1,7 +1,7 @@
 import { run } from "./visuals.js";
 import { trackHands } from './tracking.js';
 import { p5Instance } from './visuals.js';
-
+import debounce from 'debounce';
 
 let x = 0;
 let y = 0;
@@ -22,16 +22,23 @@ function sendToCsound(message) {
     }
 }
 
+const debouncedUpdateNotes = debounce(updateNotes, 400);
+const debouncedHandleHandCountChange = debounce(handleHandCountChange, 400);
+const debouncedUpdateHandCount = debounce(updateHandCount, 400);
+const debouncedRun = debounce((y, handCount) => {
+    run(y, handCount + testCount);
+}, 400, { immediate: true });
 
 // Hand tracking logic
 const stopTracking = await trackHands(({ handCount, hands }) => {
+    console.log("hey....");
     counter = (counter + 1) % posRefresh;
 
     if (counter === 0) {
         y = (handCount > 0)
             ? hands.reduce((sum, h) => sum + (0.5 - h.x), 0)
             : 0;
-        updateHandCount(handCount);
+        debouncedUpdateHandCount(handCount);
     }
 
     if (handCount === 0) {
@@ -41,8 +48,7 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
     handleHandPositions(hands);
     updateNotes(handCount, hands);
     handleHandCountChange(handCount);
-
-    run(y, handCount + testCount);
+    debouncedRun(y, handCount + testCount);
 });
 
 // --- helpers ---
@@ -70,12 +76,10 @@ function handleHandCountChange(handCount) {
 
     prevHandCount = handCount;
 
-    // Fade in active hands
     for (let i = 0; i < handCount; i++) {
         sendToCsound(`i "setNoteVol" 0 0.7 ${i} 0.3`);
     }
 
-    // Fade out inactive hands
     for (let i = 3; i >= handCount; i--) {
         sendToCsound(`i "setNoteVol" 0 0.7 ${i} 0`);
     }
