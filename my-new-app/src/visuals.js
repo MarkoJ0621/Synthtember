@@ -94,7 +94,7 @@ export function run(skew, handCount) {
     }
 
     if (handCount >= 0 && handCount <= 2) {
-        angelic().modulate(src(s0).scale(1, -1, 1, 1)).out()
+        angelic().out()
 
     }
     else if (handCount > 2 && handCount <= 4) {

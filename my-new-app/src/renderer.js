@@ -36,51 +36,36 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
         disableNotes();
         console.log("Here");
     } else {
-        handleHandPositions(hands);
-        updateNotes(handCount, hands);
-        handleHandCountChange(handCount);
+        handleHandPositions(hands, handCount);
         run(y, handCount + testCount);
     }
 });
 
 // --- helpers ---
 
-function handleHandPositions(hands) {
+function handleHandPositions(hands, handCount) {
     for (const h of hands) {
         const xPos = window.innerWidth - h.x * window.innerWidth;
         const yPos = h.y * window.innerHeight;
         p5Instance.addHandPosition(xPos, yPos);
-
+        const volume = h.y * 0.3
         const pitch = 11 - Math.round(h.x * 10);
         sendToCsound(`i "setNote" 0 0.01 ${hands.indexOf(h)} ${pitch}`);
+        sendToCsound(`i "setNoteVol" 0 0.01 ${hands.indexOf(h)} ${0.3 - volume}`);
+        console.log(volume);
+    }
+    for (let i = handCount; i < 4; i++) {
+        sendToCsound(`i "setNoteVol" 0 0.01 ${i} ${0}`);
     }
 }
 
-function updateNotes(handCount, hands) {
-    // Turn off extra notes above current hand count
-    for (let i = 3; i >= handCount; i--) {
-        sendToCsound(`i "setNoteVol" 0 0.7 ${i} 0`);
-    }
-}
 function disableNotes() {
     for (let i = 0; i < 4; i++) {
         sendToCsound(`i "setNoteVol" 0 0.1 ${i} 0`)
     }
 }
 
-function handleHandCountChange(handCount) {
-    if (handCount === prevHandCount) return;
 
-    prevHandCount = handCount;
-
-    for (let i = 0; i < handCount; i++) {
-        sendToCsound(`i "setNoteVol" 0 0.7 ${i} 0.3`);
-    }
-
-    for (let i = 3; i >= handCount; i--) {
-        sendToCsound(`i "setNoteVol" 0 0.7 ${i} 0`);
-    }
-}
 
 
 
