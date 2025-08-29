@@ -31,7 +31,7 @@ export async function trackHands(callback) {
                 delegate: "GPU"
             },
             runningMode: "VIDEO",
-            numHands: 2, // allow up to 2 hands
+            numHands: 10, // allow up to 2 hands
             minHandDetectionConfidence: 0.2,
             minHandPresenceConfidence: 0.2,
             minTrackingConfidence: 0.2

@@ -1,7 +1,6 @@
 import { run } from "./visuals.js";
 import { trackHands } from './tracking.js';
 import { p5Instance } from './visuals.js';
-import debounce from 'debounce';
 
 let x = 0;
 let y = 0;
@@ -22,33 +21,26 @@ function sendToCsound(message) {
     }
 }
 
-const debouncedUpdateNotes = debounce(updateNotes, 400);
-const debouncedHandleHandCountChange = debounce(handleHandCountChange, 400);
-const debouncedUpdateHandCount = debounce(updateHandCount, 400);
-const debouncedRun = debounce((y, handCount) => {
-    run(y, handCount + testCount);
-}, 400, { immediate: true });
-
 // Hand tracking logic
 const stopTracking = await trackHands(({ handCount, hands }) => {
-    console.log("hey....");
     counter = (counter + 1) % posRefresh;
-
     if (counter === 0) {
         y = (handCount > 0)
             ? hands.reduce((sum, h) => sum + (0.5 - h.x), 0)
             : 0;
-        debouncedUpdateHandCount(handCount);
+        updateHandCount(handCount);
     }
 
     if (handCount === 0) {
         p5Instance.noNewPositions();
+        disableNotes();
+        console.log("Here");
+    } else {
+        handleHandPositions(hands);
+        updateNotes(handCount, hands);
+        handleHandCountChange(handCount);
+        run(y, handCount + testCount);
     }
-
-    handleHandPositions(hands);
-    updateNotes(handCount, hands);
-    handleHandCountChange(handCount);
-    debouncedRun(y, handCount + testCount);
 });
 
 // --- helpers ---
@@ -59,7 +51,7 @@ function handleHandPositions(hands) {
         const yPos = h.y * window.innerHeight;
         p5Instance.addHandPosition(xPos, yPos);
 
-        const pitch = 11 - Math.round(h.y * 10);
+        const pitch = 11 - Math.round(h.x * 10);
         sendToCsound(`i "setNote" 0 0.01 ${hands.indexOf(h)} ${pitch}`);
     }
 }
@@ -68,6 +60,11 @@ function updateNotes(handCount, hands) {
     // Turn off extra notes above current hand count
     for (let i = 3; i >= handCount; i--) {
         sendToCsound(`i "setNoteVol" 0 0.7 ${i} 0`);
+    }
+}
+function disableNotes() {
+    for (let i = 0; i < 4; i++) {
+        sendToCsound(`i "setNoteVol" 0 0.1 ${i} 0`)
     }
 }
 

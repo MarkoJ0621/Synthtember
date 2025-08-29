@@ -84,7 +84,6 @@ const shapeLayer = shape(4)
     .mask(noiseTest())
     .modulateRotate(src(o0).invert());
 export function run(skew, handCount) {
-    console.log("hey guys.....")
     // Reset fade when leaving the 7-11 handCount range
     if ((handCount <= 7 || handCount >= 11) && fadeStarted) {
         fadeStarted = false;
@@ -94,8 +93,8 @@ export function run(skew, handCount) {
         }
     }
 
-    if (handCount > 1 && handCount <= 2) {
-        angelic().out()
+    if (handCount >= 0 && handCount <= 2) {
+        angelic().modulate(src(s0).scale(1, -1, 1, 1)).out()
 
     }
     else if (handCount > 2 && handCount <= 4) {
