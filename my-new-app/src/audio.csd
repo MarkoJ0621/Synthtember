@@ -196,7 +196,7 @@ instr interactiveLead
    aHand3 oscil gkHandsLeadsVol[2], cpsmidinn(gkFreq + gkHandsLeads[2])
    aHand4 oscil gkHandsLeadsVol[3], cpsmidinn(gkFreq + gkHandsLeads[3])
    aSum = aHand1 + aHand2 + aHand3 + aHand4
-   out aSum
+   out aSum * 0.9
 endin
 
 
@@ -228,16 +228,16 @@ instr pad
        printk2 gkFreq
        fThing pvsarp fSig, kbin, 0.5, 5
        aOut pvsynth fThing
-       out aOut
+       out aOut * 0.9
        gaRSend = aOut * 0.08
        if gkHands[17] == 1 then
            ktrig oscil     3, 2, 1                   ; trigger
            fThing pvsfreeze fSig, abs(ktrig), abs(ktrig)
            aFreeze pvsynth fThing
-           out aFreeze
+           out aFreeze * 0.9
        endif
    else
-       out aFilt
+       out aFilt * 0.9
        gaRSend = aFilt * 0.1 * gkHands[1]
        gaRSend2 = gaRSend2 +( aFilt * 0.2)
    endif
@@ -259,7 +259,7 @@ instr bassySound
        kEnv line 1, 1, 0.01
    endif
    aSum = aSig1 + aSig2
-   out aSum * kEnv * gkHands[3]
+   out aSum * kEnv * gkHands[3] * 0.9
 endin
 
 
@@ -296,7 +296,7 @@ instr melody
    else
        aSum = aSig
    endif
-   out  0.7  *  (aSum/2) * kEnv * p5
+   out  0.7  *  (aSum/2) * kEnv * p5 * 0.9
    if kDelayFlag == 1 then
        gaDSig += (kEnv * aSig * 0.15)
    endif
@@ -319,9 +319,9 @@ instr otherLead
        kLFO lfo 0.1, 1
        aFilt reson aOut, 1000 * (kLFO*1000),300
        kEnv line 1, 4, 0.0001
-       out aFilt * 0.02 * kEnv
+       out aFilt * 0.02 * kEnv * 0.9
    else
-       out aOut * 0.2 * aEnv * gkHands[6]
+       out aOut * 0.2 * aEnv * gkHands[6] * 0.9
    endif
 endin
 
@@ -347,9 +347,9 @@ instr sparkle
    if gkHands[16] == 1 then
        kLFO lfo 0.1,1
        aOut distort aSum, kLFO, gifn
-       out aOut*0.7 * kEnv
+       out aOut*0.6 * kEnv 
    else
-       out 0.7 * aSum *kEnv * gkHands[5]
+       out 0.6 * aSum *kEnv * gkHands[5]
    endif
 endin
 
@@ -377,7 +377,7 @@ instr otherPad
    aFiltenv adsr 2,1,1,3
    asum = aSig1 + aSig2 + aSig3 + aSig4
    aSig moogladder asum,500*aFiltenv,0.3
-   out  0.7 *   aSig*aEnv * gkHands[4]
+   out  0.6 *   aSig*aEnv * gkHands[4]
    gaRSend2 = gaRSend2 + (aSig * 02)
 endin
 
@@ -392,7 +392,7 @@ instr texture
    kEnv2 adsr 0.9,0.1,1,0.5
    if k(aTrig) > 0.4 then
        aBrah exciter aFilt, 100,20000,10,10
-       out aBrah * kEnv * 6
+       out aBrah * kEnv * 5.9
    endif
 endin
  
@@ -401,7 +401,7 @@ instr delay
    delayw gaDSig           ; write current signal
    aOut = aDelayed * 0.8   ; apply feedback attenuation
    gaDSig = gaDSig * 0     ; clear input so it doesn't accumulate
-   out aOut * gkHands[2]
+   out aOut * gkHands[2] * 0.9
 endin
 
 
@@ -418,9 +418,9 @@ instr reverb
        adel linseg 0, p3*.5, 0.02, p3*.5, 0    ;max delay time =20ms
        aflg flanger aSig, adel, .99
        asig clip aflg, 1, 1
-       out asig * 0.2
+       out asig * 0.1
    endif
-   out (aOut + aSig)  * gkHands[1]
+   out (aOut + aSig)  * gkHands[1] * 0.9
    gaRSend = 0
 endin
 
@@ -432,7 +432,7 @@ endin
 
 instr reverb2
    aSig, aDummy reverbsc gaRSend2, gaRSend2, 0.95, 2000
-   out aSig * gkHands[13] * 0.2
+   out aSig * gkHands[13] * 0.1
    gaRSend2 = 0
 endin
 
