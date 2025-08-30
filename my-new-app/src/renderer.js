@@ -9,8 +9,9 @@ let posRefresh = 10;
 let skew = 0;
 let prevCount = 0;
 let testCount = 0;
-let prevHandCount = 0;
-
+let stableHandCount = 0;
+let newHandCount = 0;
+let lastChangeTime = Date.now();
 
 // Send Csound message through IPC
 function sendToCsound(message) {
@@ -23,21 +24,30 @@ function sendToCsound(message) {
 
 // Hand tracking logic
 const stopTracking = await trackHands(({ handCount, hands }) => {
-    counter = (counter + 1) % posRefresh;
-    if (counter === 0) {
-        y = (handCount > 0)
-            ? hands.reduce((sum, h) => sum + (0.5 - h.x), 0)
-            : 0;
-        updateHandCount(handCount);
+    // --- stability filter ---
+    if (handCount !== newHandCount) {
+        newHandCount = handCount;
+        lastChangeTime = Date.now();
+    }
+    if (Date.now() - lastChangeTime >= 500) {
+        stableHandCount = newHandCount;
     }
 
-    if (handCount === 0) {
+    counter = (counter + 1) % posRefresh;
+    if (counter === 0) {
+        y = (stableHandCount > 0)
+            ? hands.reduce((sum, h) => sum + (0.5 - h.x), 0)
+            : 0;
+        updateHandCount(stableHandCount);
+    }
+
+    if (stableHandCount === 0) {
         p5Instance.noNewPositions();
         disableNotes();
         console.log("Here");
     } else {
-        handleHandPositions(hands, handCount);
-        run(y, handCount + testCount);
+        handleHandPositions(hands, stableHandCount);
+        run(y, stableHandCount + testCount);
     }
 });
 
