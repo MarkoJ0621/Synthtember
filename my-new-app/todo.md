@@ -8,9 +8,9 @@
 
 - think ab reducing the number of hands based on how good we can get hand detection
 
-- finish off the interactivity functionality (volume added, make sure it debounces correctly and handles closest hands instead of other stuff :p)
+- handle closest hands for interactivity
 
-- make the interactivity sound good
+- make the interactivity sound good//figuring out parameter interactivity as well
 
 - mix so that things arent peaking (done, overall mixing could happen nonetheless)
 

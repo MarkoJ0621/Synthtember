@@ -94,7 +94,8 @@ export function run(skew, handCount) {
     }
 
     if (handCount >= 0 && handCount <= 2) {
-        angelic().out()
+        // angelic().src(s0).scale(1, -1, 1, 1).out()
+        src(s0).scale(1, -1, 1, 1).out()
 
     }
     else if (handCount > 2 && handCount <= 4) {
@@ -170,8 +171,8 @@ export const p5Instance = new p5((p) => {
     };
 
     // Call this from your tracking callback for each hand's position
-    p.addHandPosition = (x, y) => {
-        positions.push({ x, y });
+    p.addHandPosition = (x, y, index) => {
+        positions.push({ x, y, index });
         if (positions.length > 50) { // limit trail length
             positions.shift();
         }
@@ -183,12 +184,21 @@ export const p5Instance = new p5((p) => {
         // Draw fading circles from oldest to newest
         positions.forEach((pos, i) => {
             const alpha = p.map(i, 0, positions.length - 1, 0, 255);
-            const r = 255
-            const g = 255
+            const r = 255;
+            const g = 255;
             const b = p.map(i, 0, positions.length - 1, 0, 255);
             p.fill(r, g, b, alpha);
             p.noStroke();
             p.ellipse(pos.x, pos.y, 25, 25);
+            p.fill(255, 255, 255, 255);
+            p.textSize(24);
+            p.textAlign(p.LEFT, p.CENTER);
+            p.text(pos.index, pos.x + 18, pos.y);
+            // // Draw index label next to the circle
+            // p.fill(255, 255, 255, 255); // Solid white for text
+            // p.textSize(16);
+            // p.textAlign(p.LEFT, p.CENTER);
+            // p.text(i + 1, pos.x + 18, pos.y); // Offset label to the right of the circle
         });
     };
     p.noNewPositions = () => {

@@ -59,30 +59,30 @@ export async function trackHands(callback) {
             try {
                 if (video.currentTime !== lastVideoTime) {
                     lastVideoTime = video.currentTime;
-                    // const results = handLandmarker.detectForVideo(video, performance.now());
-                    //TESTING
-                    // Draw video frame to canvas (resize)
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const results = handLandmarker.detectForVideo(video, performance.now());
+                    // //TESTING
+                    // // Draw video frame to canvas (resize)
+                    // ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                    // Denoise: apply a simple blur filter (if supported)
-                    if ('filter' in ctx) {
-                        ctx.filter = 'blur(2px)';
-                        ctx.drawImage(canvas, 0, 0);
-                        ctx.filter = 'none';
-                    }
+                    // // Denoise: apply a simple blur filter (if supported)
+                    // if ('filter' in ctx) {
+                    //     ctx.filter = 'blur(2px)';
+                    //     ctx.drawImage(canvas, 0, 0);
+                    //     ctx.filter = 'none';
+                    // }
 
-                    // Normalize: get image data and scale pixel values to [0, 1]
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const data = imageData.data;
-                    for (let i = 0; i < data.length; i += 4) {
-                        data[i] = data[i] / 255;     // R
-                        data[i + 1] = data[i + 1] / 255; // G
-                        data[i + 2] = data[i + 2] / 255; // B
-                        // Alpha stays as is
-                    }
+                    // // Normalize: get image data and scale pixel values to [0, 1]
+                    // const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    // const data = imageData.data;
+                    // for (let i = 0; i < data.length; i += 4) {
+                    //     data[i] = data[i] / 255;     // R
+                    //     data[i + 1] = data[i + 1] / 255; // G
+                    //     data[i + 2] = data[i + 2] / 255; // B
+                    //     // Alpha stays as is
+                    // }
 
                     // Pass the canvas to MediaPipe
-                    const results = handLandmarker.detectForVideo(canvas, performance.now());
+                    // const results = handLandmarker.detectForVideo(canvas, performance.now());
                     //END OF TESTING
 
                     const hands = results.landmarks.map((landmarks, index) => {
