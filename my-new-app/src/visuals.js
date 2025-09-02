@@ -157,6 +157,7 @@ export function run(skew, handCount) {
 
 export const p5Instance = new p5((p) => {
     let positions = [];
+    let latestHandPositions = {};
 
     p.setup = () => {
         const cnv = p.createCanvas(window.innerWidth, window.innerHeight);
@@ -173,15 +174,16 @@ export const p5Instance = new p5((p) => {
     // Call this from your tracking callback for each hand's position
     p.addHandPosition = (x, y, index) => {
         positions.push({ x, y, index });
+        latestHandPositions[index] = { x, y }; // <-- update latest position for this hand
         if (positions.length > 50) { // limit trail length
             positions.shift();
         }
     };
 
     p.draw = () => {
-        p.clear(); // clears transparent background
+        p.clear();
 
-        // Draw fading circles from oldest to newest
+        // Draw fading circles (trail)
         positions.forEach((pos, i) => {
             const alpha = p.map(i, 0, positions.length - 1, 0, 255);
             const r = 255;
@@ -190,15 +192,14 @@ export const p5Instance = new p5((p) => {
             p.fill(r, g, b, alpha);
             p.noStroke();
             p.ellipse(pos.x, pos.y, 25, 25);
+        });
+
+        // Draw index only for latest position of each hand
+        Object.entries(latestHandPositions).forEach(([index, pos]) => {
             p.fill(255, 255, 255, 255);
             p.textSize(24);
             p.textAlign(p.LEFT, p.CENTER);
-            p.text(pos.index, pos.x + 18, pos.y);
-            // // Draw index label next to the circle
-            // p.fill(255, 255, 255, 255); // Solid white for text
-            // p.textSize(16);
-            // p.textAlign(p.LEFT, p.CENTER);
-            // p.text(i + 1, pos.x + 18, pos.y); // Offset label to the right of the circle
+            p.text(index, pos.x + 18, pos.y);
         });
     };
     p.noNewPositions = () => {

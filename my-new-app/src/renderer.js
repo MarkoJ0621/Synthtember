@@ -22,6 +22,7 @@ function sendToCsound(message) {
     }
 }
 
+
 // Hand tracking logic
 const stopTracking = await trackHands(({ handCount, hands }) => {
     // --- stability filter ---
@@ -49,6 +50,7 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
         handleHandPositions(hands, stableHandCount);
         run(y, stableHandCount + testCount);
     }
+    drawTracers(hands)
 });
 
 // --- helpers ---
@@ -62,12 +64,24 @@ function handleHandPositions(hands, handCount) {
         const pitch = 11 - Math.round(h.x * 10);
         sendToCsound(`i "setNote" 0 0.01 ${hands.indexOf(h)} ${pitch}`);
         sendToCsound(`i "setNoteVol" 0 0.01 ${hands.indexOf(h)} ${0.3 - volume}`);
-        console.log(volume + " " + hands.indexOf(h));
+        console.log(h.z + " " + hands.indexOf(h))
     }
     for (let i = handCount; i < 4; i++) {
         sendToCsound(`i "setNoteVol" 0 0.01 ${i} ${0}`);
     }
 }
+
+function drawTracers(hands) {
+    let indexedHands = hands
+    // Sort by z (closest first)
+    indexedHands.sort((a, b) => a.z - b.z);
+    for (const h of indexedHands) {
+        const xPos = window.innerWidth - h.x * window.innerWidth;
+        const yPos = h.y * window.innerHeight;
+        p5Instance.addHandPosition(xPos, yPos, hands.indexOf(h));
+    }
+}
+
 
 function disableNotes() {
     for (let i = 0; i < 4; i++) {

@@ -102,9 +102,9 @@ export async function trackHands(callback) {
                         smoothingState[index].smoothedY += (wrist.y - smoothingState[index].smoothedY) * smoothingFactor;
 
                         return {
-                            handedness,
                             x: smoothingState[index].smoothedX,
-                            y: smoothingState[index].smoothedY
+                            y: smoothingState[index].smoothedY,
+                            z: wrist.z
                         };
                     });
 
