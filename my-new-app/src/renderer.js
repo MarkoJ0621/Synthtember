@@ -12,6 +12,10 @@ let testCount = 0;
 let stableHandCount = 0;
 let newHandCount = 0;
 let lastChangeTime = Date.now();
+let stableOrder = [];
+let lastChangeTimeOrder = Date.now();
+const lockTime = 500;
+
 
 // Send Csound message through IPC
 function sendToCsound(message) {
@@ -50,7 +54,7 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
         handleHandPositions(hands, stableHandCount);
         run(y, stableHandCount + testCount);
     }
-    drawTracers(hands)
+    drawTracers(stabilizeHandOrder(hands), hands)
 });
 
 // --- helpers ---
@@ -71,17 +75,35 @@ function handleHandPositions(hands, handCount) {
     }
 }
 
-function drawTracers(hands) {
-    let indexedHands = hands
-    // Sort by z (closest first)
-    indexedHands.sort((a, b) => a.z - b.z);
-    for (const h of indexedHands) {
-        const xPos = window.innerWidth - h.x * window.innerWidth;
-        const yPos = h.y * window.innerHeight;
-        p5Instance.addHandPosition(xPos, yPos, hands.indexOf(h));
+function stabilizeHandOrder(hands) {
+    const newOrder = hands
+        .map((h, i) => ({ i, z: h.z }))
+        .sort((a, b) => a.z - b.z)
+        .map(h => h.i);
+
+    // Compare to previous stable order
+    const orderChanged = JSON.stringify(newOrder) !== JSON.stringify(stableOrder);
+
+    if (orderChanged) {
+        if (Date.now() - lastChangeTimeOrder >= lockTime) {
+            stableOrder = newOrder;
+            lastChangeTimeOrder = Date.now();
+        }
+    } else {
+        lastChangeTimeOrder = Date.now();
     }
+
+    return stableOrder.length ? stableOrder : newOrder;
 }
 
+function drawTracers(indexes, hands) {
+    for (let i = 0; i < indexes.length; i++) {
+        const h = hands[indexes[i]];
+        const xPos = window.innerWidth - h.x * window.innerWidth;
+        const yPos = h.y * window.innerHeight;
+        p5Instance.addHandPosition(xPos, yPos, i);
+    }
+}
 
 function disableNotes() {
     for (let i = 0; i < 4; i++) {
