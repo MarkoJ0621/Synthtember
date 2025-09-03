@@ -49,7 +49,6 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
     if (stableHandCount === 0) {
         p5Instance.noNewPositions();
         disableNotes();
-        console.log("Here");
     } else {
         handleHandPositions(hands, stableHandCount);
         run(y, stableHandCount + testCount);
@@ -67,8 +66,10 @@ function handleHandPositions(hands, handCount) {
         const volume = h.y * 0.3
         const pitch = 11 - Math.round(h.x * 10);
         sendToCsound(`i "setNote" 0 0.01 ${hands.indexOf(h)} ${pitch}`);
-        sendToCsound(`i "setNoteVol" 0 0.01 ${hands.indexOf(h)} ${0.3 - volume}`);
-        console.log(h.z + " " + hands.indexOf(h))
+        if (hands.indexOf(h) == 1) {
+            sendToCsound(`i "setNoteVol" 0 0.01 ${hands.indexOf(h)} ${0.3 - volume}`);
+        }
+        sendToCsound(`i "setNoteVol" 0 0.01 ${hands.indexOf(h)} ${0.3}`);
     }
     for (let i = handCount; i < 4; i++) {
         sendToCsound(`i "setNoteVol" 0 0.01 ${i} ${0}`);
@@ -136,6 +137,7 @@ function updateHandCount(currentCount) {
 function increaseHandCount() {
     sendToCsound(`i "setHand" 0 0.01 ${testCount} 1`);
     testCount += 1;
+    console.log(testCount);
 }
 
 
