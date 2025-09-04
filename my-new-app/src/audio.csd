@@ -429,7 +429,7 @@ endin
 
 instr reverb2
    aSig, aDummy reverbsc gaRSend2, gaRSend2, 0.95, 2000
-   out aSig * scale(gkHandsLeads[2],0.5,0,1,0)
+   out aSig * scale(gkHandsLeads[3],0.5,0,1,0)
    gaRSend2 = 0
 endin
 
