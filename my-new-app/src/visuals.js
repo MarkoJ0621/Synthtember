@@ -94,21 +94,16 @@ export function run(skew, handCount) {
     }
 
     if (handCount >= 0 && handCount <= 2) {
-        // angelic().src(s0).scale(1, -1, 1, 1).out()
-        src(s0).scale(1, -1, 1, 1).out()
+        angelic().scale(1, -1, 1, 1).out()
 
     }
     else if (handCount > 2 && handCount <= 4) {
         shapeLayer.out()
     }
-    else if (handCount > 4 && handCount < 6) {
-        console.log("here")
-        layerThing().mask(noise(1)).add(shapeLayer).out()
-    }
-    else if (handCount > 4 && handCount <= 7) {
+    else if (handCount > 4 && handCount <= 6) {
         layerThing().mask(noise(1)).add(shapeLayer).modulate(src(s0).scale(1, -1, 1, 1)).out()
     }
-    else if (handCount > 7 && handCount < 11) {
+    else if (handCount > 7 && handCount < 9) {
         // Start fade when entering this handCount range
         if (!fadeStarted) {
             fadeStarted = true;
@@ -135,22 +130,10 @@ export function run(skew, handCount) {
         layerThing().add(shapeLayer).modulate(src(s0).scale(1, -1, 1, 1)).color(1, 1, 1, () => 1.0 - fadeAlpha).out()
         console.log(fadeAlpha);
     }
-    else if (handCount > 11 && handCount < 15) {
-        layerThing()
-            .layer(shapeLayer).modulate(src(s0).scale(1, -1, 1, 1)).layer(src(s0).thresh(0.4).invert().luma(0.4).contrast(0.8)).out()
-    }
-    else if (handCount >= 15 && handCount < 18) {
-        console.log("u've been morphed ")
-        layerThing()
-            .layer(shapeLayer).layer(src(s0).thresh(0.4).invert().luma(0.4).contrast(0.8).modulate(src(s0), 1)).out()
-    } else if (handCount >= 18 && handCount < 21) {
+    else if (handCount >= 11 && handCount < 13) {
         console.log("bro......double Morphed");
         layerThing()
-            .layer(shapeLayer).layer(src(s0).scale(1, -1, 1, 1).thresh(0.4).invert().luma(0.4).contrast(0.8).modulate(src(s0), () => Math.sin(smoothRepeat))).out()
-    } else {
-        console.log("bro......double Morphed");
-        layerThing()
-            .layer(shapeLayer).scrollY(0, () => targetRepeat / 4).layer(src(s0).thresh(0.4).invert().luma(0.4).contrast(0.8).modulate(src(s0).scale(1, -1, 1, 1), () => Math.sin(smoothRepeat))).out()
+            .layer(shapeLayer).layer(src(s0).scale(1, -1, 1, 1).thresh(0.4).invert().luma(0.4).contrast(0.8).modulate(src(s0).scale(1, -1, 1, 1), () => Math.sin(smoothRepeat))).out()
     }
 }
 
@@ -187,8 +170,8 @@ export const p5Instance = new p5((p) => {
         positions.forEach((pos, i) => {
             const alpha = p.map(i, 0, positions.length - 1, 0, 255);
             const r = 255;
-            const g = 255;
-            const b = p.map(i, 0, positions.length - 1, 0, 255);
+            const g = 120;
+            const b = 0
             p.fill(r, g, b, alpha);
             p.noStroke();
             p.ellipse(pos.x, pos.y, 25, 25);
@@ -196,7 +179,7 @@ export const p5Instance = new p5((p) => {
 
         // Draw index only for latest position of each hand
         Object.entries(latestHandPositions).forEach(([index, pos]) => {
-            p.fill(255, 255, 255, 255);
+            p.fill(255, 120, 0, 255);
             p.textSize(24);
             p.textAlign(p.LEFT, p.CENTER);
             p.text(index, pos.x + 18, pos.y);

@@ -15,3 +15,5 @@
 - see potential ideas of how to not make interactive not changes not too extreme 
 
 - figure out why the hell my shit keeps freezing on the mac mini
+
+- 4 seperate sounds for each hand that's literally it stop over complicating this omfg

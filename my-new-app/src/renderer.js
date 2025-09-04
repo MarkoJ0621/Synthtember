@@ -63,13 +63,10 @@ function handleHandPositions(hands, handCount) {
         const xPos = window.innerWidth - h.x * window.innerWidth;
         const yPos = h.y * window.innerHeight;
         p5Instance.addHandPosition(xPos, yPos, hands.indexOf(h));
-        const volume = h.y * 0.3
-        const pitch = 11 - Math.round(h.x * 10);
+        const volume = h.y
+        const pitch = h.x;
         sendToCsound(`i "setNote" 0 0.01 ${hands.indexOf(h)} ${pitch}`);
-        if (hands.indexOf(h) == 1) {
-            sendToCsound(`i "setNoteVol" 0 0.01 ${hands.indexOf(h)} ${0.3 - volume}`);
-        }
-        sendToCsound(`i "setNoteVol" 0 0.01 ${hands.indexOf(h)} ${0.3}`);
+        sendToCsound(`i "setNoteVol" 0 0.01 ${hands.indexOf(h)} ${1 - volume}`);
     }
     for (let i = handCount; i < 4; i++) {
         sendToCsound(`i "setNoteVol" 0 0.01 ${i} ${0}`);

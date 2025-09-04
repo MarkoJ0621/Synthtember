@@ -46,7 +46,7 @@ gaRSend init 0
 gaRSend2 init 0
 gkNotes[] fillarray 0, 7, -7, 4, -5, 5, 12, 19 ; for the bells
 gkNotes2[] fillarray 0, 6, 12, 18, 11, 5, -6, 17
-gkInteract[] fillarray 0,2,4,5,7,11,12,14,16
+gkInteract[] fillarray -12,-5,0,7,12
 gkHands[] init 30
 gkHandsLeads[] init 4
 gkHandsLeadsVol[] fillarray 0, 0, 0, 0
@@ -69,106 +69,106 @@ instr triggers
        kCounter = 1
        kLinePlay random 0, 10
        gkFreq random 55, 65
-;        if gkHands[9] == 1 then
-;            kNotePad random 0,6
-;            event "i", "otherPad", 0, 10, gkFreq,1
-;            event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7,1
-;            if kLinePlay > kSpectralOdds then
-;                event "i", "pad", 0, 10, gkFreq, 0,1
-;            endif
-;        else
-;            event "i", "pad", 0, 10, gkFreq, 0,0
-;        endif
-;        kSparklePlay random 0,10
-;        if kSparklePlay > 4 && gkHands[5] == 1 then
-;            event "i", "sparkle", 0, 5, gkFreq
-;        endif
-;        if kLinePlay > kBassOdds then
-;            event "i", "descendingLine",0,10,0
-;            if kBassFlag == 1 then
-;                kBassFlag = 0
-;                kBassOdds = 9
-;            else
-;                kBassFlag = 1
-;                kBassOdds = 5
-;            endif
-;        endif
-;    endif
+       if gkHands[4] == 1 then
+           kNotePad random 0,6
+           event "i", "otherPad", 0, 10, gkFreq,1
+           event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7,1
+           if kLinePlay > kSpectralOdds then
+               event "i", "pad", 0, 10, gkFreq, 0,1
+           endif
+       else
+           event "i", "pad", 0, 10, gkFreq, 0,0
+       endif
+       kSparklePlay random 0,10
+       if kSparklePlay > 4 && gkHands[4] == 1 then
+           event "i", "sparkle", 0, 5, gkFreq
+       endif
+       if kLinePlay > kBassOdds then
+           event "i", "descendingLine",0,10,0
+           if kBassFlag == 1 then
+               kBassFlag = 0
+               kBassOdds = 9
+           else
+               kBassFlag = 1
+               kBassOdds = 5
+           endif
+       endif
+   endif
 
 
-;        if gkmetro2 == 1 then
-;            kNotePlay random 0, 10
-;            event "i", "melody", 0, 2, gkFreq, kCounter,0
-;            kCounter = kCounter * 2/3
-;        endif
+       if gkmetro2 == 1 then
+           kNotePlay random 0, 10
+           event "i", "melody", 0, 2, gkFreq, kCounter,0
+           kCounter = kCounter * 2/3
+       endif
       
-;        if gkmetro2 == 1 then
-;            kNotePlay random 0, 10
-;                if kNotePlay > 6 then
-;                    event "i", "melodyNotes", 0, 5, floor(random(1,6))
-;                endif
+       if gkmetro2 == 1 then
+           kNotePlay random 0, 10
+               if kNotePlay > 6 then
+                   event "i", "melodyNotes", 0, 5, floor(random(1,6))
+               endif
 
 
-;        if gkmetro3 == 1 then
-;            kNotePad random 0,6
-;            kHarmonyTest random 0, 10
-;            event"i", "otherPad", 0, 6, gkFreq + gkNotes[floor(kNotePad)],0
-;            if gkHands[6] == 1 then
-;                 event"i", "otherLead", 2, 6, gkFreq + gkNotes[floor(kNotePad)]
-;            endif
-;            if gkHands[7] == 1 then
-;                kThreshold = 6
-;            else
-;                kThreshold = 10
-;            endif
-;            if gkHands[12] == 1 then
-;                kThreshold = 2
-;            endif
-;            if kThreshold < kHarmonyTest then
-;                if gkHands[9] == 1 then
-;                    if gkHands[11] == 1 then
-;                        event "i", "pad", 0, 6, gkFreq,1,0
-;                        event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7
-;                    else
-;                        event "i", "pad", 0, 6, gkFreq,1,0
-;                    endif
-;                else
-;                    event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7
-;                endif
-;            endif
-;            if gkHands[8] == 1 then
-;                kThreshold2 = 8
-;            else
-;                kThreshold2 = 10
-;            endif
-;            if gkHands[12] == 1 then
-;                kThreshold2 = 2
-;            endif
-;            if kThreshold2 < kHarmonyTest then
-;                event "i", "pad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7,1
-;            endif
-;        endif
-;        if gkmetro4 == 1 && kBassFlag == 1 then
-;            kMetro4Counter += 1
-;            krandom4 random 0,5
-;            if kMetro4Counter > 7 && krandom4 > 2.5 then
-;                turnoff2 4, 0, 0
-;                event "i", "bassySound", 0,6,gkFreq - 24 + gkNotes[floor(krandom4)],random(0,100),1
-;                kMetro4Counter = 0
-;            endif
-;        endif
-;    endif
-;    if gkmetro5 == 1 then
-;        if gkHands[20] == 1 then
-;            kHarmonyTest random 0, 10
-;            printk2 kHarmonyTest
-;            if kHarmonyTest > 8 then
-;                event "i", "texture", 0, 1.5
-;            endif
-;        endif
-;    endif
-;    if gkmetro6 == 1 then
-;             event "i", "interactiveLead", 0,7
+       if gkmetro3 == 1 then
+           kNotePad random 0,6
+           kHarmonyTest random 0, 10
+           event"i", "otherPad", 0, 6, gkFreq + gkNotes[floor(kNotePad)],0
+           if gkHands[4] == 1 then
+                event"i", "otherLead", 2, 6, gkFreq + gkNotes[floor(kNotePad)]
+           endif
+           if gkHands[4] == 1 then
+               kThreshold = 6
+           else
+               kThreshold = 10
+           endif
+           if gkHands[12] == 1 then
+               kThreshold = 2
+           endif
+           if kThreshold < kHarmonyTest then
+               if gkHands[4] == 1 then
+                   if gkHands[6] == 1 then
+                       event "i", "pad", 0, 6, gkFreq,1,0
+                       event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7
+                   else
+                       event "i", "pad", 0, 6, gkFreq,1,0
+                   endif
+               else
+                   event "i", "otherPad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7
+               endif
+           endif
+           if gkHands[4] == 1 then
+               kThreshold2 = 8
+           else
+               kThreshold2 = 10
+           endif
+           if gkHands[6] == 1 then
+               kThreshold2 = 2
+           endif
+           if kThreshold2 < kHarmonyTest then
+               event "i", "pad", 0, 6, (gkFreq + gkNotes[floor(kNotePad)]) + 7,1
+           endif
+       endif
+       if gkmetro4 == 1 && kBassFlag == 1 then
+           kMetro4Counter += 1
+           krandom4 random 0,5
+           if kMetro4Counter > 7 && krandom4 > 2.5 then
+               turnoff2 4, 0, 0
+               event "i", "bassySound", 0,6,gkFreq - 24 + gkNotes[floor(krandom4)],random(0,100),1
+               kMetro4Counter = 0
+           endif
+       endif
+   endif
+   if gkmetro5 == 1 then
+       if gkHands[8] == 1 then
+           kHarmonyTest random 0, 10
+           printk2 kHarmonyTest
+           if kHarmonyTest > 8 then
+               event "i", "texture", 0, 1.5
+           endif
+       endif
+   endif
+   if gkmetro6 == 1 then
+            ; event "i", "interactiveLead", 0,7
    endif
 endin
 
@@ -187,7 +187,7 @@ instr melodyNotes
            if gkHands [20] == 1 then
              event "i", "melody", 0, 3, gkFreq + gkNotes2[kNote]-7,0.7,1
                event "i", "melody", 0, 3, gkFreq + gkNotes2[kNote]-14,0.7,1
-           elseif gkHands[18] == 1 then
+           elseif gkHands[8] == 1 then
                event "i", "melody", 0, 3, gkFreq + gkNotes[kNote]-7,0.5,1
                event "i", "melody", 0, 3, gkFreq + gkNotes[kNote]-14,0.5,1
            endif
@@ -197,26 +197,6 @@ instr melodyNotes
        endif
        kCounter = kCounter + 1
    endif
-endin
-
-
-instr interactiveLead
-	kFreq1 = cpsmidinn(gkFreq + gkHandsLeads[0])
-    kFreq2 = cpsmidinn(gkFreq + gkHandsLeads[1])
-    kFreq3 = cpsmidinn(gkFreq + gkHandsLeads[2])
-    kFreq4 = cpsmidinn(gkFreq + gkHandsLeads[3])
-    if (gkHandsLeadsVol[1] != 0) then 
-        kVol = scale(gkHandsLeadsVol[1],1,0,0.3,0)
-    else 
-        kVol = 1 
-    endif
-    printk2 kFreq1
-    kharmonicsNum = scale(gkHandsLeadsVol[0],20,1,0.3,0)
-    aOut1 gbuzz gkHandsLeadsVol[0], kFreq1, kharmonicsNum, 1, 0.5, 1
-    aOut2 gbuzz gkHandsLeadsVol[1], kFreq2, kharmonicsNum, 1, 0.5, 1
-    aOut3 fmvoice gkHandsLeadsVol[2], kFreq3, 20, 99, 10, 4
-    aOut3Reverbed, aDummy reverbsc aOut3, aOut3, 0.95, 20000
-    out ((aOut3Reverbed * kVol) + aOut2 + aOut1) * kVol
 endin
 
 
@@ -239,8 +219,10 @@ instr pad
    aSig3 oscil 0.15, cpsmidinn(gkFreq - 5)
    aSig4 oscil 0.1, cpsmidinn(gkFreq + 7) + (kLFO * 0.5)
    aSig5 oscil 0.1, cpsmidinn(gkFreq + 12)
-   aSig6 oscil 0.1, cpsmidinn(gkFreq + 19) + (kLFO * 0.5)
-   aSum = ((aSig1 + aSig2 + aSig3 + aSig) * kEnv1 ) + ((aSig4 + aSig5 + aSig6 + aSigB) * kEnv2)
+   aSig6 oscil 0.5, cpsmidinn(gkFreq + 12 + gkHandsLeads[0]) + (kLFO * 0.5)
+   aSig7 oscil 0.5, cpsmidinn(gkFreq + 7 + gkHandsLeads[1]) + (kLFO * 0.5)
+
+   aSum = ((aSig1 + aSig2 + aSig3 + aSig) * kEnv1 ) + ((aSig4 + aSig5 + (aSig6 * gkHandsLeadsVol[0])+ aSigB + (aSig7 * gkHandsLeadsVol[1])) * kEnv2)
    aFilt butterlp aSum, 800 + ((1000 * kLFO) + 400)
    if kSpectralFlag == 1 then
        kbin  oscil 0.1,betarand(4,0,0) - 5, 1
@@ -250,7 +232,7 @@ instr pad
        aOut pvsynth fThing
        out aOut * 1
        gaRSend = aOut * 0.08
-       if gkHands[17] == 1 then
+       if gkHands[8] == 1 then
            ktrig oscil     3, 2, 1                   ; trigger
            fThing pvsfreeze fSig, abs(ktrig), abs(ktrig)
            aFreeze pvsynth fThing
@@ -258,7 +240,7 @@ instr pad
        endif
    else
        out aFilt * 0.9
-       gaRSend = aFilt * 0.1 * gkHands[1]
+       gaRSend = aFilt * 0.1 * gkHands[0]
        gaRSend2 = gaRSend2 +( aFilt * 0.2)
    endif
 endin
@@ -279,7 +261,7 @@ instr bassySound
        kEnv line 1, 1, 0.01
    endif
    aSum = aSig1 + aSig2
-   out aSum * kEnv * gkHands[3] * 0.7
+   out aSum * kEnv * gkHands[0] * 0.7
 endin
 
 
@@ -329,17 +311,17 @@ endin
 
 
 instr otherLead
-   kFreq cpsmidinn p4+12+7+12
+   kFreq cpsmidinn p4 + 12 + gkHands[0]
    aSig1  poscil    .2,kFreq ,1
    aSig2 poscil .2, kFreq + 5, 1
    aEnv      adsr 2,1,.7,3
    aSum = aSig1 + aSig2
    aOut, aDummy reverbsc aSum, aSum, 0.95, 20000,sr, 0
-   if gkHands[14] == 1 then
+   if gkHands[0] == 1 then
        kLFO lfo 0.1, 1
        aFilt reson aOut, 1000 * (kLFO*1000),300
        kEnv line 1, 4, 0.0001
-       out aFilt * 0.02 * kEnv * 0.7
+       out aFilt * 0.02 * kEnv * 0.9
    else
        out aOut * 0.2 * aEnv  * 0.65
    endif
@@ -357,14 +339,14 @@ instr sparkle
    aSig2 vco2 0.1, kFreq * 1.5, 12
    aSig3 vco2 0.1, kFreq * 2.9, 12
    aSig4 vco2 0.1, kFreq/4, 12
-   if gkHands[19] == 1 then
+   if gkHands[8] == 1 then
        aSum butterlp (aSig + aSig2 + aSig3 + aSig4) * 0.6, kFreq * 2
    else
        aSum butterlp aSig + aSig2, kFreq*2
    endif
-   gaRSend  += aSum * 1 * kEnv * gkHands[5]
-   gaDSig   += aSum * 0.2 * kEnv * gkHands[5]
-   if gkHands[16] == 1 then
+   gaRSend  += aSum * 1 * kEnv * gkHands[4]
+   gaDSig   += aSum * 0.2 * kEnv * gkHands[4]
+   if gkHands[8] == 1 then
        kLFO lfo 0.1,1
        aOut distort aSum, kLFO, gifn
        out aOut*0.6 * kEnv 
@@ -412,7 +394,7 @@ instr texture
    kEnv2 adsr 0.9,0.1,1,0.5
    if k(aTrig) > 0.4 then
        aBrah exciter aFilt, 100,20000,10,10
-       out aBrah * kEnv * 5.9
+       out aBrah * kEnv * 5.9 * gkHandsLeadsVol[3]
    endif
 endin
  
@@ -421,7 +403,7 @@ instr delay
    delayw gaDSig           ; write current signal
    aOut = aDelayed * 0.8   ; apply feedback attenuation
    gaDSig = gaDSig * 0     ; clear input so it doesn't accumulate
-   out aOut * gkHands[2] * 0.7
+   out aOut * gkHands[0] * 0.7
 endin
 
 
@@ -434,13 +416,8 @@ instr reverb
    fFDSig pvsanal aSig, 1024, 256, 2056, 0
    fPitched pvshift fFDSig, cpsmidinn(gkFreq),0
    aOut pvsynth fPitched
-   if gkHands[15] == 1 then
-       adel linseg 0, p3*.5, 0.02, p3*.5, 0    ;max delay time =20ms
-       aflg flanger aSig, adel, .99
-       asig clip aflg, 1, 1
-       out asig * 0.1
-   endif
-   out (aOut + aSig)  * gkHands[1] * 0.9
+
+   out aSig * scale(gkHandsLeadsVol[2],1,0,1,0)
    gaRSend = 0
 endin
 
@@ -452,13 +429,13 @@ endin
 
 instr reverb2
    aSig, aDummy reverbsc gaRSend2, gaRSend2, 0.95, 2000
-   out aSig * gkHands[13] * 0.1
+   out aSig * scale(gkHandsLeads[2],1,0,1,0)
    gaRSend2 = 0
 endin
 
 
 instr setNote
-   gkHandsLeads[p4] = p5
+   gkHandsLeads[p4] = scale(p5,5,0,1,0)
 endin
 
 instr setNoteVol 
@@ -467,7 +444,7 @@ endin
 schedule "reverb", 0, 999999999999
 schedule "reverb2", 0,999999999999
 schedule "delay", 0, 999999999999
-schedule "interactiveLead", 0, 99999
+schedule "hand1", 0, 99999
 
 </CsInstruments>
 <CsScore>
