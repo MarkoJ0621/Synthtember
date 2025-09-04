@@ -139,7 +139,7 @@ export function run(skew, handCount) {
 export const p5Instance = new p5((p) => {
     let positions = [];
     let latestHandPositions = {};
-
+    let indexFadeAlpha = {};
     p.setup = () => {
         const cnv = p.createCanvas(window.innerWidth, window.innerHeight);
         cnv.parent('p5-overlay');
@@ -155,8 +155,9 @@ export const p5Instance = new p5((p) => {
     // Call this from your tracking callback for each hand's position
     p.addHandPosition = (x, y, index) => {
         positions.push({ x, y, index });
-        latestHandPositions[index] = { x, y }; // <-- update latest position for this hand
-        if (positions.length > 50) { // limit trail length
+        latestHandPositions[index] = { x, y };
+        indexFadeAlpha[index] = 255; // Reset to fully visible
+        if (positions.length > 50) {
             positions.shift();
         }
     };
@@ -164,29 +165,33 @@ export const p5Instance = new p5((p) => {
     p.draw = () => {
         p.clear();
 
-        // Draw fading circles (trail)
+        // Fade and draw circles
         positions.forEach((pos, i) => {
-            const alpha = 255;
-            const r = 255;
-            const g = 120;
-            const b = 0
-            p.fill(r, g, b, alpha);
+            const alpha = p.map(i, 0, positions.length - 1, 0, 255);
+            p.fill(255, 120, 0, alpha);
             p.noStroke();
             p.ellipse(pos.x, pos.y, 25, 25);
         });
 
-        // Draw index only for latest position of each hand
+        // Remove positions that are fully faded
+        positions = positions.filter((pos, i) => {
+            const alpha = p.map(i, 0, positions.length - 1, 0, 255);
+            return alpha > 0;
+        });
+        // Draw index only for hands that have a visible tracer
         Object.entries(latestHandPositions).forEach(([index, pos]) => {
-            p.fill(255, 120, 0, 255);
-            p.textSize(24);
-            p.textAlign(p.LEFT, p.CENTER);
-            p.text(index, pos.x + 18, pos.y);
+            if (positions.some(p => p.index == index)) {
+                p.fill(255, 120, 0, 255);
+                p.textSize(24);
+                p.textAlign(p.LEFT, p.CENTER);
+                p.text(index, pos.x + 18, pos.y);
+            }
         });
     };
+
+    // In your noNewPositions function:
     p.noNewPositions = () => {
-        // Just shift the oldest to fade out existing positions
-        if (positions.length > 0) {
-            positions.shift();
-        }
-    }
+        // positions = [];
+        // latestHandPositions = {};
+    };
 });

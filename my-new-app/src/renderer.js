@@ -70,6 +70,7 @@ function handleHandPositions(hands, handCount) {
     }
     for (let i = handCount; i < 4; i++) {
         sendToCsound(`i "setNoteVol" 0 0.01 ${i} ${0}`);
+        sendToCsound(`i "setNote" 0 0.01 ${i} ${0}`);
     }
 }
 
