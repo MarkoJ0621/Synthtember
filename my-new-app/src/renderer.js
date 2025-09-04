@@ -51,7 +51,7 @@ const stopTracking = await trackHands(({ handCount, hands }) => {
         disableNotes();
     } else {
         handleHandPositions(hands, stableHandCount);
-        run(y, stableHandCount + testCount);
+        run(y, stableHandCount);
     }
     drawTracers(stabilizeHandOrder(hands), hands)
 });

@@ -85,12 +85,10 @@ const shapeLayer = shape(4)
     .modulateRotate(src(o0).invert());
 export function run(skew, handCount) {
     // Reset fade when leaving the 7-11 handCount range
-    if ((handCount <= 7 || handCount >= 11) && fadeStarted) {
+    if (!(handCount > 7 && handCount < 9) && fadeStarted) {
         fadeStarted = false;
-        if (fadeInterval) {
-            clearInterval(fadeInterval);
-            fadeInterval = null;
-        }
+        clearInterval(fadeInterval);
+        fadeInterval = null;
     }
 
     if (handCount >= 0 && handCount <= 2) {
@@ -168,7 +166,7 @@ export const p5Instance = new p5((p) => {
 
         // Draw fading circles (trail)
         positions.forEach((pos, i) => {
-            const alpha = p.map(i, 0, positions.length - 1, 0, 255);
+            const alpha = 255;
             const r = 255;
             const g = 120;
             const b = 0
