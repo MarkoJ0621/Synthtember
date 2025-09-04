@@ -42,7 +42,7 @@ app.whenReady().then(() => {
 
   // Spawn the Csound child process
   const csdPath = path.join(app.getAppPath(), 'src', 'audio.csd');
-  csoundProcess = spawn('csound', ['-odac2', '-L', 'stdin', csdPath]);
+  csoundProcess = spawn('csound', ['-odac1', '-L', 'stdin', csdPath]);
 
   csoundProcess.stdout.on('data', (data) => {
     console.log(`Csound: ${data.toString()}`);

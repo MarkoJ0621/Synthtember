@@ -417,7 +417,7 @@ instr reverb
    fPitched pvshift fFDSig, cpsmidinn(gkFreq),0
    aOut pvsynth fPitched
 
-   out aSig * scale(gkHandsLeadsVol[2],1,0,1,0)
+   out aSig * scale(gkHandsLeadsVol[2],0.5,0,1,0)
    gaRSend = 0
 endin
 
@@ -429,7 +429,7 @@ endin
 
 instr reverb2
    aSig, aDummy reverbsc gaRSend2, gaRSend2, 0.95, 2000
-   out aSig * scale(gkHandsLeads[2],1,0,1,0)
+   out aSig * scale(gkHandsLeads[2],0.5,0,1,0)
    gaRSend2 = 0
 endin
 
